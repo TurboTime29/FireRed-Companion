@@ -1,5 +1,6 @@
 /** Pokémon FireRed (.sav) reader — Generation III save format, FRLG layout (offsets from pret/pokefirered include/global.h). */
 import type { Db } from '../../data/db'
+import type { Chapter, Step } from '../../data/types'
 import type { OwnedMon } from '../../store/progress'
 import { NATURES } from '../battle'
 
@@ -239,16 +240,17 @@ export function inferStoryProgress(save: ParsedSave, db: Db): StoryProgress {
     if (!key) return false
     return gotFlagNames.some((n) => new RegExp(`FLAG_GOT_${key}(_|$)`).test(n) && has(n))
   }
+  const hasGotFlag = (itemId: number) => { const key = db.itemById.get(itemId)?.key.replace('ITEM_', ''); return !!key && gotFlagNames.some((n) => new RegExp(`FLAG_GOT_${key}(_|$)`).test(n)) }
+  const hasGotFlagPokemon = (dex: number) => { const key = db.pokemonById.get(dex)?.key.replace('SPECIES_', ''); return !!key && gotFlagNames.some((n) => new RegExp(`FLAG_GOT_${key}(_|$)`).test(n)) }
   const steps: string[] = []
   let lastDoneChapter = 0
+  const chapterInfo: { c: Chapter; info: { s: Step; verifiable: boolean; done: boolean; strong: boolean }[] }[] = []
   for (const c of db.chapters) {
-    const strongIdx: number[] = []
-    const verified: string[] = []
-    const verifiable = new Set<string>()
-    c.steps.forEach((s, i) => {
+    // verifiable = the save can prove it (trainer flags, item flags, badges, gift flags); done = it did
+    const info = c.steps.map((s) => {
       const isHidden = !!s.flag && hiddenFlags.has(s.flag)
-      const canVerify = isHidden || !!s.flag || !!s.trainers?.length || !!s.battleGroup || !!s.badge
-      if (canVerify) verifiable.add(s.id)
+      const giftKnown = s.kind === 'gift' && (s.items?.some(hasGotFlag) || s.pokemon?.some(hasGotFlagPokemon))
+      const verifiable = isHidden || !!s.flag || !!s.trainers?.length || !!s.battleGroup || !!s.badge || !!giftKnown
       let done = false
       if (isHidden) done = flagSet.has(s.flag!)
       else if (s.flag && has(s.flag)) done = true
@@ -257,20 +259,26 @@ export function inferStoryProgress(save: ParsedSave, db: Db): StoryProgress {
       else if (s.badge && save.badges[s.badge - 1]) done = true
       else if (s.kind === 'gift' && s.items?.some(gotItem)) done = true
       else if (s.kind === 'gift' && s.pokemon?.some(gotPokemon)) done = true
-      if (done) { verified.push(s.id); if (!isHidden) strongIdx.push(i) }
+      return { s, verifiable, done, strong: done && !isHidden }
     })
-    if (strongIdx.length) lastDoneChapter = c.n
-    // Verifiable steps (trainers, item balls, hidden items, badges) are ticked only on direct evidence.
-    // Plain story/tip-style steps before the last verified step are assumed done.
-    const upto = strongIdx.length ? Math.max(...strongIdx) : -1
-    c.steps.forEach((s, i) => { if (i <= upto && s.kind !== 'tip' && !verifiable.has(s.id)) steps.push(s.id) })
-    steps.push(...verified)
+    if (info.some((x) => x.strong)) lastDoneChapter = c.n
+    chapterInfo.push({ c, info })
   }
-  // in chapters before the furthest one with confirmed progress, the unverifiable story steps are complete
-  const stepSet = new Set(steps)
-  for (const c of db.chapters) if (c.n < lastDoneChapter) for (const s of c.steps) {
-    const canVerify = !!s.flag || !!s.trainers?.length || !!s.battleGroup || !!s.badge
-    if (s.kind !== 'tip' && !canVerify && !stepSet.has(s.id)) { steps.push(s.id); stepSet.add(s.id) }
+  // Unverifiable story steps are assumed done only when the nearest verifiable steps on both sides are done
+  // (so an unfought gym or dojo keeps its intro and reward steps open even if you did later things first).
+  // In chapters before the furthest one with progress, one done neighbour is enough.
+  for (const { c, info } of chapterInfo) {
+    const loose = c.n < lastDoneChapter
+    info.forEach((x, i) => {
+      if (x.verifiable) { if (x.done) steps.push(x.s.id); return }
+      if (x.s.kind === 'tip') return
+      const prev = [...info.slice(0, i)].reverse().find((y) => y.verifiable)
+      const next = info.slice(i + 1).find((y) => y.verifiable)
+      const prevOk = !prev || prev.done, nextOk = !next || next.done
+      if (!info.some((y) => y.strong)) return
+      const ok = loose ? (!!prev?.done || !!next?.done || (!prev && !next)) : prevOk && nextOk
+      if (ok) steps.push(x.s.id)
+    })
   }
-  return { flags, beaten, steps, currentChapter: Math.max(1, lastDoneChapter) }
+  return { flags, beaten, steps: [...new Set(steps)], currentChapter: Math.max(1, lastDoneChapter) }
 }
