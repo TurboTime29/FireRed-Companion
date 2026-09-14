@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { getDb } from '../data/db'
 import { exportProgress, useProgress, type ProgressDoc } from '../store/progress'
 import { useSettings } from '../store/settings'
-import { signIn, signOut, syncEnabled, useSession, useSyncStatus } from '../lib/sync'
+import { clearCloud, signIn, signOut, syncEnabled, useSession, useSyncStatus } from '../lib/sync'
 import { inferStoryProgress, parseSave, type ParsedSave } from '../lib/save/gen3'
 import { PageTitle, Section, Sprite } from '../components/ui'
 
@@ -55,7 +55,7 @@ export default function SettingsPage() {
           </form>
         )}
         {syncEnabled && session && <div className="flex items-center gap-2 text-sm"><span>Signed in as {session.user.email}</span><span className={`chip ${sync.status === 'synced' ? 'bg-emerald-600 text-white' : sync.status === 'error' ? 'bg-red-600 text-white' : 'bg-stone-300'}`}>{sync.status}</span>{sync.msg && <span className="text-xs text-red-600">{sync.msg}</span>}<button className="btn-ghost ml-auto text-xs" onClick={() => signOut()}>Sign out</button></div>}
-        <p className="mt-1 text-xs text-stone-500">Progress is saved in this browser instantly and pushed to the cloud a couple of seconds after every change. Newest copy wins.</p>
+        <p className="mt-1 text-xs text-stone-500">Progress is saved in this browser instantly and pushed to the cloud a couple of seconds after every change. Devices are merged, so anything ticked or caught on one device is kept everywhere; a new device never overwrites the cloud.</p>
       </Section>
 
       <Section title="Import a FireRed save (.sav)">
@@ -76,7 +76,7 @@ export default function SettingsPage() {
         <div className="flex flex-wrap gap-2">
           <button className="btn-ghost" onClick={doExport}>Export progress (JSON)</button>
           <label className="btn-ghost cursor-pointer">Import JSON<input type="file" accept=".json" className="hidden" onChange={(e) => e.target.files?.[0] && doImport(e.target.files[0])} /></label>
-          <button className="btn-ghost text-red-600" onClick={() => { if (confirm('Erase all progress in this browser?')) prog.reset() }}>Reset everything</button>
+          <button className="btn-ghost text-red-600" onClick={async () => { if (confirm(session ? 'Erase all progress in this browser AND the cloud copy?' : 'Erase all progress in this browser?')) { try { await clearCloud() } catch (e) { setMsg('Cloud reset failed: ' + (e as Error).message) } prog.reset() } }}>Reset everything</button>
         </div>
       </Section>
 

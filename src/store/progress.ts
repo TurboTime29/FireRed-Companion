@@ -44,8 +44,43 @@ export interface ProgressDoc {
 
 export const emptyProgress = (): ProgressDoc => ({
   version: 1, playerName: '', starter: null, mons: [], badges: Array(8).fill(false), seen: [], caught: [], steps: {}, flags: {}, beaten: {},
-  currentChapter: 1, money: 3000, keyItems: [], notes: {}, updatedAt: Date.now(),
+  currentChapter: 1, money: 3000, keyItems: [], notes: {}, updatedAt: 0,
 })
+
+export function isEmptyProgress(d: ProgressDoc): boolean {
+  return d.mons.length === 0 && Object.keys(d.steps).length === 0 && Object.keys(d.flags).length === 0 && Object.keys(d.beaten).length === 0 && d.caught.length === 0 && !d.badges.some(Boolean)
+}
+
+/** Union of two progress documents: nothing recorded on either device is lost. Scalars come from the newer one. */
+export function mergeProgress(a: ProgressDoc, b: ProgressDoc): ProgressDoc {
+  const [newer, older] = a.updatedAt >= b.updatedAt ? [a, b] : [b, a]
+  const minMap = (x: Record<string, number>, y: Record<string, number>) => {
+    const out: Record<string, number> = { ...y }
+    for (const [k, v] of Object.entries(x)) out[k] = out[k] ? Math.min(out[k], v) : v
+    return out
+  }
+  const union = (x: number[], y: number[]) => [...new Set([...x, ...y])].sort((p, q) => p - q)
+  const mons = new Map<string, OwnedMon>()
+  for (const m of older.mons) mons.set(m.uid, m)
+  for (const m of newer.mons) mons.set(m.uid, m)
+  return {
+    version: 1,
+    playerName: newer.playerName || older.playerName,
+    starter: newer.starter ?? older.starter,
+    mons: [...mons.values()],
+    badges: Array.from({ length: 8 }, (_, i) => !!(a.badges[i] || b.badges[i])),
+    seen: union(a.seen, b.seen),
+    caught: union(a.caught, b.caught),
+    steps: minMap(a.steps, b.steps),
+    flags: minMap(a.flags, b.flags),
+    beaten: minMap(a.beaten as Record<string, number>, b.beaten as Record<string, number>) as Record<number, number>,
+    currentChapter: Math.max(a.currentChapter, b.currentChapter),
+    money: newer.money,
+    keyItems: union(a.keyItems, b.keyItems),
+    notes: { ...older.notes, ...newer.notes },
+    updatedAt: Math.max(a.updatedAt, b.updatedAt),
+  }
+}
 
 interface ProgressState extends ProgressDoc {
   setStarter: (s: 1 | 4 | 7 | null) => void
@@ -117,7 +152,7 @@ export const useProgress = create<ProgressState>()(
       setMoney: (money) => set({ money, updatedAt: now() }),
       setKeyItem: (id, v) => set((s) => ({ keyItems: toggleList(s.keyItems, id, v), updatedAt: now() })),
       setNote: (key, text) => set((s) => ({ notes: { ...s.notes, [key]: text }, updatedAt: now() })),
-      replaceAll: (doc) => set({ ...emptyProgress(), ...doc, updatedAt: doc.updatedAt || now() }),
+      replaceAll: (doc) => set({ ...emptyProgress(), ...doc, updatedAt: doc.updatedAt || (isEmptyProgress(doc) ? 0 : now()) }),
       reset: () => set({ ...emptyProgress() }),
       // keep get referenced for type completeness
       ...( { get } as unknown as Record<string, never>),

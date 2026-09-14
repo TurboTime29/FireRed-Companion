@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient, type Session, type SupabaseClient } from '@supabase/supabase-js'
-import { exportProgress, useProgress, type ProgressDoc } from '../store/progress'
+import { exportProgress, isEmptyProgress, mergeProgress, useProgress, type ProgressDoc } from '../store/progress'
 
 const rawUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim()
 // Accept a pasted REST/dashboard URL and reduce it to the project origin.
@@ -28,6 +28,16 @@ export async function signIn(email: string) {
   if (error) throw error
 }
 export async function signOut() { await supabase?.auth.signOut() }
+
+/** Delete the cloud copy (used by "Reset everything", since an empty document is never pushed). */
+export async function clearCloud() {
+  if (!supabase) return
+  const { data } = await supabase.auth.getSession()
+  const userId = data.session?.user.id
+  if (!userId) return
+  const { error } = await supabase.from('progress').delete().eq('user_id', userId)
+  if (error) throw error
+}
 
 async function pull(userId: string): Promise<ProgressDoc | null> {
   const { data, error } = await supabase!.from('progress').select('doc').eq('user_id', userId).maybeSingle()
@@ -59,10 +69,18 @@ export function useSync() {
         setStatus('syncing')
         const remote = await pull(userId)
         const local = exportProgress(useProgress.getState())
-        if (remote && remote.updatedAt > local.updatedAt) {
+        if (remote && isEmptyProgress(local)) {
+          // fresh device: take the cloud copy as-is
           useProgress.getState().replaceAll(remote)
           lastPushed.current = remote.updatedAt
-        } else {
+        } else if (remote) {
+          // both sides have data: merge so nothing recorded on either device is lost
+          const merged = mergeProgress(local, remote)
+          const changedRemote = JSON.stringify(merged) !== JSON.stringify(remote)
+          if (JSON.stringify(merged) !== JSON.stringify(local)) useProgress.getState().replaceAll(merged)
+          if (changedRemote) await push(userId, merged)
+          lastPushed.current = merged.updatedAt
+        } else if (!isEmptyProgress(local)) {
           await push(userId, local)
           lastPushed.current = local.updatedAt
         }
@@ -78,6 +96,7 @@ export function useSync() {
         try {
           setStatus('syncing')
           const doc = exportProgress(s)
+          if (isEmptyProgress(doc)) { setStatus('synced'); return } // never push a blank document over the cloud copy
           await push(userId, doc)
           lastPushed.current = doc.updatedAt
           setStatus('synced')
