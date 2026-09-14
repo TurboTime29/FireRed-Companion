@@ -17,3 +17,7 @@ create policy "owner can update" on public.progress
   for update using (auth.uid() = user_id);
 create policy "owner can delete" on public.progress
   for delete using (auth.uid() = user_id);
+
+-- Make the table reachable through the Data API even if "Automatically expose new tables" is off.
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on public.progress to authenticated;
