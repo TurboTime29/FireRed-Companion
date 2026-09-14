@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { createClient, type Session, type SupabaseClient } from '@supabase/supabase-js'
 import { exportProgress, useProgress, type ProgressDoc } from '../store/progress'
 
-const url = import.meta.env.VITE_SUPABASE_URL as string | undefined
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+const rawUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim()
+// Accept a pasted REST/dashboard URL and reduce it to the project origin.
+const url = rawUrl ? (() => { try { return new URL(rawUrl).origin } catch { return undefined } })() : undefined
+const key = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim()
 
 export const supabase: SupabaseClient | null = url && key ? createClient(url, key) : null
 export const syncEnabled = !!supabase
