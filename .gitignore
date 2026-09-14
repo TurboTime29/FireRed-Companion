@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+!.env.example
+scripts/raw/
+scripts/fixtures/
+scripts/__pycache__/
+.claude/
+*.tsbuildinfo

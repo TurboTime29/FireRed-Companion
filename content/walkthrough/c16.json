@@ -1,0 +1,14 @@
+{
+  "id": "c16", "n": 16, "title": "Indigo Plateau: Elite Four & Champion", "subtitle": "Lorelei, Bruno, Agatha, Lance, then your rival",
+  "guidePart": 17,
+  "maps": ["MAP_POKEMON_LEAGUE_LORELEIS_ROOM", "MAP_POKEMON_LEAGUE_BRUNOS_ROOM", "MAP_POKEMON_LEAGUE_AGATHAS_ROOM", "MAP_POKEMON_LEAGUE_LANCES_ROOM", "MAP_POKEMON_LEAGUE_CHAMPIONS_ROOM"],
+  "steps": [
+    {"kind": "tip", "text": "Recommended: six Pokémon around Lv.55, a dozen Full Restores/Hyper Potions, several Revives. No healing between battles except your items. The rival's team depends on your starter — check Battle for the exact one."},
+    {"kind": "boss", "text": "Lorelei (Ice/Water): Dewgong Lv.52, Cloyster Lv.51, Slowbro Lv.52, Jynx Lv.54, Lapras Lv.54. Electric moves hit four of five; Fighting for Jynx and Cloyster; Grass for Slowbro. Watch Sheer Cold and Lapras's Hydro Pump.", "map": "MAP_POKEMON_LEAGUE_LORELEIS_ROOM", "trainers": ["TRAINER_ELITE_FOUR_LORELEI"]},
+    {"kind": "boss", "text": "Bruno (Fighting/Rock): Onix Lv.51 ×2, Hitmonchan Lv.53, Hitmonlee Lv.53, Machamp Lv.56. Psychic and Flying for the fighters; Water/Grass for Onix. Alakazam or Lapras carry this.", "map": "MAP_POKEMON_LEAGUE_BRUNOS_ROOM", "trainers": ["TRAINER_ELITE_FOUR_BRUNO"]},
+    {"kind": "boss", "text": "Agatha (Ghost/Poison): Gengar Lv.54 and Lv.58, Golbat Lv.54, Haunter Lv.53, Arbok Lv.56. Psychic hits everything except nothing is immune; Earthquake also works on Gengar/Haunter/Arbok. She spams Confuse Ray and Toxic: keep Full Heals.", "map": "MAP_POKEMON_LEAGUE_AGATHAS_ROOM", "trainers": ["TRAINER_ELITE_FOUR_AGATHA"]},
+    {"kind": "boss", "text": "Lance (Dragon): Gyarados Lv.56, Dragonair Lv.54 ×2, Aerodactyl Lv.58, Dragonite Lv.60. Ice Beam is the answer for the dragons (4× on Dragonite), Electric for Gyarados, Rock/Ice/Water for Aerodactyl.", "map": "MAP_POKEMON_LEAGUE_LANCES_ROOM", "trainers": ["TRAINER_ELITE_FOUR_LANCE"]},
+    {"kind": "boss", "text": "Champion: your rival. Pidgeot Lv.59, Alakazam Lv.57, Rhydon Lv.59, plus two of Gyarados/Arcanine/Exeggutor and his starter at Lv.63. He uses Full Restores. Lead with something fast against Pidgeot, keep a Water type for Rhydon and Arcanine, and a Bug/Ghost/physical hitter for Alakazam.", "map": "MAP_POKEMON_LEAGUE_CHAMPIONS_ROOM", "battleGroup": "champion-first"},
+    {"kind": "story", "text": "Hall of Fame. The credits roll and you restart at home. Post-game: talk to Oak, then Celio on One Island needs the Ruby and Sapphire (chapters 17-18). 60 Kanto Pokémon caught unlocks the National Dex.", "map": "MAP_POKEMON_LEAGUE_CHAMPIONS_ROOM"}
+  ]
+}

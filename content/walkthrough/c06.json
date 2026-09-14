@@ -1,0 +1,22 @@
+{
+  "id": "c06", "n": 6, "title": "Route 11, Diglett's Cave, Routes 9–10", "subtitle": "Itemfinder, Flash, the Old Amber, road to Rock Tunnel",
+  "guidePart": 7,
+  "maps": ["MAP_ROUTE11", "MAP_DIGLETTS_CAVE_B1F", "MAP_ROUTE2", "MAP_PEWTER_CITY", "MAP_ROUTE9", "MAP_ROUTE10"],
+  "steps": [
+    {"kind": "story", "text": "Route 11 (east of Vermilion): a gauntlet of trainers. Drowzee and Sandshrew live here. The route is blocked by a sleeping Snorlax on Route 12 until you have the Poké Flute.", "map": "MAP_ROUTE11", "pokemon": ["Drowzee", "Sandshrew"]},
+    {"auto": "map", "map": "MAP_ROUTE11"},
+    {"kind": "gift", "text": "Route 11 gate, upstairs: Oak's aide gives the Itemfinder once you have caught 30 species. Use it to detect hidden items.", "map": "MAP_ROUTE11", "items": ["ITEM_ITEMFINDER"]},
+    {"kind": "trade", "text": "Same gate upstairs: trade a Nidorina for Nidorino (or the reverse).", "map": "MAP_ROUTE11", "pokemon": ["Nidorina", "Nidorino"]},
+    {"kind": "story", "text": "Diglett's Cave (entrance north of Route 11): straight tunnel to Route 2. Catch a Diglett or Dugtrio; they wreck Lt. Surge and later Electric/Poison foes.", "map": "MAP_DIGLETTS_CAVE_B1F", "pokemon": ["Diglett", "Dugtrio"]},
+    {"kind": "gift", "text": "Route 2 east gate: Oak's aide gives HM05 Flash (10 species caught). You need it for Rock Tunnel.", "map": "MAP_ROUTE2", "items": ["ITEM_HM05"], "hm": 5},
+    {"kind": "trade", "text": "Route 2 house (cut the tree): trade an Abra for Mimien the Mr. Mime.", "map": "MAP_ROUTE2", "pokemon": ["Abra", "Mr. Mime"]},
+    {"auto": "items", "map": "MAP_ROUTE2"},
+    {"kind": "gift", "text": "Pewter Museum: use Cut on the tree beside the building to reach the back door. The scientist gives the Old Amber (revive as Aerodactyl on Cinnabar).", "map": "MAP_PEWTER_CITY", "items": ["ITEM_OLD_AMBER"], "pokemon": ["Aerodactyl"]},
+    {"auto": "hidden", "map": "MAP_PEWTER_CITY"},
+    {"kind": "story", "text": "Back to Cerulean, cut the tree east of the city and take Route 9. Mostly trainers; Rattata, Spearow, Ekans.", "map": "MAP_ROUTE9"},
+    {"auto": "map", "map": "MAP_ROUTE9"},
+    {"kind": "story", "text": "Route 10 north: Pokémon Center outside Rock Tunnel. Voltorb, Magnemite, Machop in the grass.", "map": "MAP_ROUTE10", "pokemon": ["Voltorb", "Magnemite", "Machop"]},
+    {"kind": "gift", "text": "Route 10 Pokémon Center: Oak's aide gives an Everstone once you have caught 20 species.", "map": "MAP_ROUTE10", "items": ["ITEM_EVERSTONE"]},
+    {"auto": "map", "map": "MAP_ROUTE10"}
+  ]
+}

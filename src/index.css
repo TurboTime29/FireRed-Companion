@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-type-normal: #a8a878;
+  --color-type-fire: #f08030;
+  --color-type-water: #6890f0;
+  --color-type-electric: #f8d030;
+  --color-type-grass: #78c850;
+  --color-type-ice: #98d8d8;
+  --color-type-fighting: #c03028;
+  --color-type-poison: #a040a0;
+  --color-type-ground: #e0c068;
+  --color-type-flying: #a890f0;
+  --color-type-psychic: #f85888;
+  --color-type-bug: #a8b820;
+  --color-type-rock: #b8a038;
+  --color-type-ghost: #705898;
+  --color-type-dragon: #7038f8;
+  --color-type-dark: #705848;
+  --color-type-steel: #b8b8d0;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+html, body {
+  @apply bg-stone-100 text-stone-900 dark:bg-stone-950 dark:text-stone-100;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sprite {
+  image-rendering: pixelated;
+}
+
+.card {
+  @apply rounded-xl bg-white shadow-sm ring-1 ring-stone-200 dark:bg-stone-900 dark:ring-stone-800;
+}
+
+.btn, .btn-primary, .btn-ghost {
+  @apply inline-flex items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition active:scale-[0.98];
+}
+.btn-primary {
+  @apply bg-red-700 text-white hover:bg-red-800;
+}
+.btn-ghost {
+  @apply bg-stone-200/70 text-stone-800 hover:bg-stone-300 dark:bg-stone-800 dark:text-stone-100 dark:hover:bg-stone-700;
+}
+.input {
+  @apply w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-red-500 dark:border-stone-700 dark:bg-stone-900;
+}
+.chip {
+  @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+}
+.link {
+  @apply text-red-700 hover:underline dark:text-red-400;
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}

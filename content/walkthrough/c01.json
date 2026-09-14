@@ -1,0 +1,18 @@
+{
+  "id": "c01", "n": 1, "title": "Pallet Town", "subtitle": "Choose a starter, first rival battle, Oak's Parcel",
+  "guidePart": 1,
+  "maps": ["MAP_PALLET_TOWN", "MAP_PALLET_TOWN_PLAYERS_HOUSE_1F", "MAP_PALLET_TOWN_PLAYERS_HOUSE_2F", "MAP_PALLET_TOWN_PROFESSOR_OAKS_LAB", "MAP_ROUTE1", "MAP_VIRIDIAN_CITY", "MAP_VIRIDIAN_CITY_MART"],
+  "steps": [
+    {"kind": "tip", "text": "Set your starter and add it in Team so the guide shows the right rival teams and battle advice."},
+    {"kind": "story", "text": "Leave your house (check the PC upstairs for a free Potion) and try to walk north into the tall grass. Professor Oak stops you and takes you to his lab.", "map": "MAP_PALLET_TOWN"},
+    {"kind": "missable", "text": "Pick your starter. Bulbasaur makes Brock and Misty easy; Charmander struggles early but gets Metal Claw at Lv.13; Squirtle is the balanced pick. The rival takes the one that beats yours.", "map": "MAP_PALLET_TOWN_PROFESSOR_OAKS_LAB", "pokemon": ["Bulbasaur", "Charmander", "Squirtle"]},
+    {"kind": "boss", "text": "Rival battle 1 in the lab. Spam your attack move; Growl/Tail Whip is a waste.", "map": "MAP_PALLET_TOWN_PROFESSOR_OAKS_LAB", "battleGroup": "rival-oaks-lab"},
+    {"kind": "story", "text": "Walk north through Route 1. The Mart clerk on the path gives you a free Potion. Pidgey and Rattata here are fine early catches once you have Poké Balls.", "map": "MAP_ROUTE1", "pokemon": ["Pidgey", "Rattata"]},
+    {"kind": "story", "text": "In Viridian City, the Poké Mart clerk hands you Oak's Parcel. Take it back to Professor Oak in Pallet Town.", "map": "MAP_VIRIDIAN_CITY_MART", "items": ["ITEM_OAKS_PARCEL"]},
+    {"kind": "gift", "text": "Deliver the parcel: Oak gives you and your rival the Pokédex. Rival's sister Daisy (rival's house) gives you the Town Map.", "map": "MAP_PALLET_TOWN_PROFESSOR_OAKS_LAB", "items": ["ITEM_TOWN_MAP"]},
+    {"kind": "shop", "text": "Back in Viridian City, buy Poké Balls (at least 5) and a couple of Potions. Antidotes help in Viridian Forest.", "map": "MAP_VIRIDIAN_CITY_MART"},
+    {"kind": "gift", "text": "Old man in Viridian City demonstrates catching, then the Pokémon Center-side house: the man on the north exit gives the Teachy TV.", "map": "MAP_VIRIDIAN_CITY", "items": ["ITEM_TEACHY_TV"]},
+    {"auto": "map", "map": "MAP_VIRIDIAN_CITY"},
+    {"kind": "tip", "text": "Viridian Gym is locked until you have 7 badges. Route 22 (west) has the first optional rival battle once you have a Pokémon around Lv.8+ — see chapter 2."}
+  ]
+}

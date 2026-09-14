@@ -1,0 +1,17 @@
+{
+  "id": "c02", "n": 2, "title": "Route 22 & Viridian Forest", "subtitle": "Optional rival battle, the forest maze, arrive at Pewter City",
+  "guidePart": 2,
+  "maps": ["MAP_ROUTE22", "MAP_ROUTE2", "MAP_VIRIDIAN_FOREST", "MAP_PEWTER_CITY", "MAP_PEWTER_CITY_MART"],
+  "steps": [
+    {"kind": "optional", "text": "Route 22 (west of Viridian): catch a Nidoran♂/♀ and Mankey. Nidoking/Nidoqueen carry the whole game and Mankey beats Brock.", "map": "MAP_ROUTE22", "pokemon": ["Nidoran♂", "Nidoran♀", "Mankey"]},
+    {"kind": "boss", "text": "Rival battle 2 on Route 22 (walk toward the League gate). He has a Lv.9 Pidgey and his starter at Lv.9; be Lv.10+ or bring a second Pokémon.", "map": "MAP_ROUTE22", "battleGroup": "rival-route22-early"},
+    {"auto": "map", "map": "MAP_ROUTE22"},
+    {"kind": "story", "text": "Route 2: go north into Viridian Forest. Catch a Pikachu if you are patient (5%). Caterpie becomes Butterfree by Lv.10 and its Confusion (special) is a real answer to Brock.", "map": "MAP_ROUTE2", "pokemon": ["Pikachu", "Caterpie"]},
+    {"auto": "map", "map": "MAP_ROUTE2"},
+    {"kind": "story", "text": "Viridian Forest: follow the winding path north; the Bug Catchers each give a small fight. Poison from Weedle is common: keep Antidotes.", "map": "MAP_VIRIDIAN_FOREST"},
+    {"auto": "map", "map": "MAP_VIRIDIAN_FOREST"},
+    {"kind": "story", "text": "Pewter City: heal, buy Potions. The Museum (₽50) has fossils on display; the Old Amber is behind the back door and needs Cut later.", "map": "MAP_PEWTER_CITY"},
+    {"auto": "map", "map": "MAP_PEWTER_CITY"},
+    {"kind": "tip", "text": "Before Brock: Rock is weak to Water, Grass, Fighting, Ground. Mankey's Low Kick, Squirtle's Bubble, Bulbasaur's Vine Whip, Butterfree's Confusion all work. Charmander users: grind to Lv.13 for Metal Claw or use Mankey."}
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "c17", "n": 17, "title": "Post-game: the Ruby, Four Island & Six Island", "subtitle": "National Dex, Mt. Ember's Ruby, Icefall Cave (Waterfall), Lorelei, Pattern Bush, Dotted Hole",
+  "guidePart": 18,
+  "maps": ["MAP_MT_EMBER_EXTERIOR", "MAP_MT_EMBER_RUBY_PATH_B5F", "MAP_ONE_ISLAND", "MAP_FOUR_ISLAND", "MAP_FOUR_ISLAND_ICEFALL_CAVE_1F", "MAP_FOUR_ISLAND_ICEFALL_CAVE_B1F", "MAP_FOUR_ISLAND_ICEFALL_CAVE_BACK", "MAP_SIX_ISLAND", "MAP_SIX_ISLAND_WATER_PATH", "MAP_SIX_ISLAND_GREEN_PATH", "MAP_SIX_ISLAND_PATTERN_BUSH", "MAP_SIX_ISLAND_OUTCAST_ISLAND", "MAP_SIX_ISLAND_ALTERING_CAVE", "MAP_SIX_ISLAND_RUIN_VALLEY", "MAP_SIX_ISLAND_DOTTED_HOLE_SAPPHIRE_ROOM"],
+  "steps": [
+    {"kind": "tip", "text": "Talk to Professor Oak after the credits: with 60 Kanto species caught he upgrades you to the National Dex. Then sail to One Island (Vermilion harbor) and talk to Celio: he needs a Ruby and a Sapphire."},
+    {"kind": "story", "text": "Mt. Ember exterior: two Rocket Grunts now block the Ruby Path entrance. Beat them and learn the first Rocket password. Rock Smash the boulders inside.", "map": "MAP_MT_EMBER_EXTERIOR"},
+    {"auto": "trainers", "map": "MAP_MT_EMBER_EXTERIOR"},
+    {"kind": "item", "text": "Ruby Path B5F: read the Braille and take the Ruby.", "map": "MAP_MT_EMBER_RUBY_PATH_B5F", "items": ["ITEM_RUBY"]},
+    {"kind": "gift", "text": "Give Celio the Ruby: he hands over the Rainbow Pass (islands Four to Seven).", "map": "MAP_ONE_ISLAND", "items": ["ITEM_RAINBOW_PASS"]},
+    {"kind": "story", "text": "Four Island: the rival is at the Day Care (no battle). Day Care raises two Pokémon and breeds eggs. Body Slam Move Tutor in the house next door. Lorelei's house shows her doll collection.", "map": "MAP_FOUR_ISLAND"},
+    {"auto": "map", "map": "MAP_FOUR_ISLAND"},
+    {"kind": "item", "text": "Icefall Cave (Surf north of Four Island): slide over the ice; HM07 Waterfall is on B1F.", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_B1F", "items": ["ITEM_HM07"], "hm": 7},
+    {"auto": "map", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_1F"},
+    {"auto": "map", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_B1F"},
+    {"kind": "story", "text": "Icefall Cave back room (use Waterfall): Lorelei helps you beat the Rocket Grunts, who reveal the second password. Wild Lapras can be caught in this cave.", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_BACK", "pokemon": ["Lapras"]},
+    {"auto": "map", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_BACK"},
+    {"kind": "story", "text": "Six Island: quiet town; a hidden item by the Center.", "map": "MAP_SIX_ISLAND"},
+    {"auto": "map", "map": "MAP_SIX_ISLAND"},
+    {"kind": "story", "text": "Water Path (north): trainers, the Heracross lady's house (Nest Ball for a big Heracross).", "map": "MAP_SIX_ISLAND_WATER_PATH"},
+    {"auto": "map", "map": "MAP_SIX_ISLAND_WATER_PATH"},
+    {"auto": "map", "map": "MAP_SIX_ISLAND_GREEN_PATH"},
+    {"kind": "story", "text": "Pattern Bush: 12 Bug Catchers hidden in the grass; Heracross (5%) lives here.", "map": "MAP_SIX_ISLAND_PATTERN_BUSH", "pokemon": ["Heracross"]},
+    {"auto": "map", "map": "MAP_SIX_ISLAND_PATTERN_BUSH"},
+    {"kind": "story", "text": "Outcast Island (Surf north from Green Path): swimmers and items. Altering Cave holds only Zubat without event data.", "map": "MAP_SIX_ISLAND_OUTCAST_ISLAND"},
+    {"auto": "map", "map": "MAP_SIX_ISLAND_OUTCAST_ISLAND"},
+    {"kind": "story", "text": "Ruin Valley (south of Six Island, Cut): trainers, items, wild Yanma and Wobbuffet; the Dotted Hole sits in the middle.", "map": "MAP_SIX_ISLAND_RUIN_VALLEY"},
+    {"auto": "map", "map": "MAP_SIX_ISLAND_RUIN_VALLEY"},
+    {"kind": "story", "text": "Dotted Hole: use Cut on the door. Read the Braille on each floor (up, down, left, right pattern) to reach the Sapphire room — Gideon the scientist snatches the Sapphire and runs to the Rocket Warehouse on Five Island.", "map": "MAP_SIX_ISLAND_DOTTED_HOLE_SAPPHIRE_ROOM"}
+  ]
+}

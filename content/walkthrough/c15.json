@@ -1,0 +1,18 @@
+{
+  "id": "c15", "n": 15, "title": "Route 23 & Victory Road", "subtitle": "Final rival battle before the League, badge gates, boulder puzzles",
+  "guidePart": 16,
+  "maps": ["MAP_ROUTE22", "MAP_ROUTE23", "MAP_VICTORY_ROAD_1F", "MAP_VICTORY_ROAD_2F", "MAP_VICTORY_ROAD_3F", "MAP_INDIGO_PLATEAU_EXTERIOR"],
+  "steps": [
+    {"kind": "boss", "text": "Route 22: Rival battle 7 at the gate. Pidgeot Lv.47, Rhyhorn Lv.45, Gyarados/Growlithe/Exeggcute Lv.45, Alakazam Lv.47, starter Lv.53. Be around Lv.45+.", "map": "MAP_ROUTE22", "battleGroup": "rival-route22-late"},
+    {"kind": "story", "text": "Route 23: guards check each badge in turn. Surf across the water, then walk north through the grass (Fearow, Arbok, Sandslash, Ditto). Eight hidden items along the way.", "map": "MAP_ROUTE23"},
+    {"auto": "map", "map": "MAP_ROUTE23"},
+    {"kind": "tip", "text": "Victory Road needs Strength (boulders onto switches to open doors) and ideally Flash-free eyes — it is lit. Bring Repels; Machoke, Golbat, Onix, Marowak, Graveler inside."},
+    {"kind": "story", "text": "Victory Road 1F: push the boulder onto the switch to open the path north.", "map": "MAP_VICTORY_ROAD_1F"},
+    {"auto": "map", "map": "MAP_VICTORY_ROAD_1F"},
+    {"kind": "story", "text": "2F: two boulder switches; Double-Edge Move Tutor near the west side (once).", "map": "MAP_VICTORY_ROAD_2F"},
+    {"auto": "map", "map": "MAP_VICTORY_ROAD_2F"},
+    {"kind": "story", "text": "3F: the last boulder puzzle and the strongest trainers, then back to 2F east and out.", "map": "MAP_VICTORY_ROAD_3F"},
+    {"auto": "map", "map": "MAP_VICTORY_ROAD_3F"},
+    {"kind": "story", "text": "Indigo Plateau: Pokémon Center and Mart (buy Full Restores, Revives, Hyper Potions, Ultra Balls). Save before entering.", "map": "MAP_INDIGO_PLATEAU_EXTERIOR"}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "c11", "n": 11, "title": "Routes 19–20 & Seafoam Islands", "subtitle": "Surf south from Fuchsia, boulder puzzle, Articuno",
+  "guidePart": 12,
+  "maps": ["MAP_ROUTE19", "MAP_ROUTE20", "MAP_SEAFOAM_ISLANDS_1F", "MAP_SEAFOAM_ISLANDS_B1F", "MAP_SEAFOAM_ISLANDS_B2F", "MAP_SEAFOAM_ISLANDS_B3F", "MAP_SEAFOAM_ISLANDS_B4F"],
+  "steps": [
+    {"kind": "tip", "text": "You need Surf (Soul Badge) and Strength (Rainbow Badge) here. Bring an Electric or Grass type for the swimmers' Water teams."},
+    {"kind": "story", "text": "Route 19: surf south from Fuchsia past a crowd of Swimmers. Tentacool everywhere; Horsea, Krabby, Staryu (LG) by rod.", "map": "MAP_ROUTE19", "pokemon": ["Tentacool", "Horsea"]},
+    {"auto": "map", "map": "MAP_ROUTE19"},
+    {"kind": "story", "text": "Route 20 east: more Swimmers, then the Seafoam Islands entrance.", "map": "MAP_ROUTE20"},
+    {"auto": "map", "map": "MAP_ROUTE20"},
+    {"kind": "story", "text": "Seafoam Islands: push the two boulders on 1F into the holes, then the two on B1F, so they fall to B3F/B4F and stop the current. Zubat, Golbat, Psyduck, Slowpoke, Seel, Krabby; Jynx and Dewgong in the deeper floors.", "map": "MAP_SEAFOAM_ISLANDS_1F", "pokemon": ["Seel", "Jynx", "Slowpoke"]},
+    {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_1F"},
+    {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_B1F"},
+    {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_B2F"},
+    {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_B3F"},
+    {"kind": "missable", "text": "B4F: Articuno Lv.50 (Ice/Flying). One-time: save, use Rock/Electric/Fire to whittle, sleep it, Ultra Balls. Weak to Rock ×4.", "map": "MAP_SEAFOAM_ISLANDS_B4F", "pokemon": ["Articuno"]},
+    {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_B4F"},
+    {"kind": "story", "text": "Exit and surf west along Route 20 to Cinnabar Island.", "map": "MAP_ROUTE20"}
+  ]
+}

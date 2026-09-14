@@ -1,0 +1,20 @@
+{
+  "id": "c07", "n": 7, "title": "Rock Tunnel & Lavender Town", "subtitle": "Flash through the tunnel, Lavender, Route 8, Underground Path to Celadon",
+  "guidePart": 8,
+  "maps": ["MAP_ROCK_TUNNEL_1F", "MAP_ROCK_TUNNEL_B1F", "MAP_LAVENDER_TOWN", "MAP_ROUTE8", "MAP_UNDERGROUND_PATH_EAST_WEST_TUNNEL", "MAP_ROUTE7"],
+  "steps": [
+    {"kind": "tip", "text": "Use Flash inside or you will see almost nothing. Bring Repels if you are tired of Zubat. Onix and Machop can be caught here."},
+    {"kind": "story", "text": "Rock Tunnel 1F: head northeast to the first ladder.", "map": "MAP_ROCK_TUNNEL_1F"},
+    {"auto": "map", "map": "MAP_ROCK_TUNNEL_1F"},
+    {"kind": "story", "text": "Rock Tunnel B1F: follow the ladders; the Rock Slide Move Tutor is near the southwest ladder (once only).", "map": "MAP_ROCK_TUNNEL_B1F"},
+    {"auto": "map", "map": "MAP_ROCK_TUNNEL_B1F"},
+    {"kind": "story", "text": "Route 10 south exits into Lavender Town. The Name Rater is here; the Volunteer Pokémon House tells you Mr. Fuji went to the Tower.", "map": "MAP_LAVENDER_TOWN"},
+    {"kind": "tip", "text": "Pokémon Tower is blocked by the ghost of Marowak on 6F until you have the Silph Scope from the Rocket Hideout in Celadon (chapter 8). You can fight the rival on 2F now if you like."},
+    {"kind": "story", "text": "Route 8 (west of Lavender): trainers, Growlithe and Vulpix (Vulpix is LeafGreen-only) in the grass. Saffron's gate guard is still thirsty: take the Underground Path.", "map": "MAP_ROUTE8", "pokemon": ["Growlithe", "Abra"]},
+    {"auto": "map", "map": "MAP_ROUTE8"},
+    {"kind": "story", "text": "Underground Path (east-west tunnel): seven recurring hidden items along the lamps; Itemfinder territory.", "map": "MAP_UNDERGROUND_PATH_EAST_WEST_TUNNEL"},
+    {"auto": "map", "map": "MAP_UNDERGROUND_PATH_EAST_WEST_TUNNEL"},
+    {"kind": "story", "text": "Route 7 is a short walk into Celadon City.", "map": "MAP_ROUTE7"},
+    {"auto": "map", "map": "MAP_ROUTE7"}
+  ]
+}

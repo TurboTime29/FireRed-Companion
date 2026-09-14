@@ -1,0 +1,21 @@
+{
+  "id": "c12", "n": 12, "title": "Cinnabar Island", "subtitle": "Fossil revival, Pokémon Mansion, Secret Key, Volcano Badge",
+  "guidePart": 13,
+  "maps": ["MAP_CINNABAR_ISLAND", "MAP_CINNABAR_ISLAND_POKEMON_LAB_EXPERIMENT_ROOM", "MAP_CINNABAR_ISLAND_POKEMON_LAB_RESEARCH_ROOM", "MAP_POKEMON_MANSION_1F", "MAP_POKEMON_MANSION_2F", "MAP_POKEMON_MANSION_3F", "MAP_POKEMON_MANSION_B1F", "MAP_CINNABAR_ISLAND_GYM"],
+  "steps": [
+    {"kind": "gift", "text": "Pokémon Lab, back room: hand the scientist your fossil (Helix → Omanyte, Dome → Kabuto, Old Amber → Aerodactyl). Leave the building and come back to collect it at Lv.5.", "map": "MAP_CINNABAR_ISLAND_POKEMON_LAB_EXPERIMENT_ROOM", "pokemon": ["Omanyte", "Kabuto", "Aerodactyl"]},
+    {"kind": "trade", "text": "Lab lounge trades: Raichu → Electrode, Venonat → Tangela (holds Stardust), Ponyta → Seel.", "map": "MAP_CINNABAR_ISLAND_POKEMON_LAB_RESEARCH_ROOM", "pokemon": ["Tangela", "Electrode", "Seel"]},
+    {"kind": "tutor", "text": "Lab: Metronome Move Tutor (once).", "map": "MAP_CINNABAR_ISLAND_POKEMON_LAB_RESEARCH_ROOM"},
+    {"kind": "story", "text": "The Gym is locked. Enter the Pokémon Mansion (north). Statues with switches open and close doors; read the diaries about Mew and Mewtwo. Grimer, Koffing, Ponyta, Growlithe, Rattata inside.", "map": "MAP_POKEMON_MANSION_1F", "pokemon": ["Grimer", "Koffing", "Ponyta"]},
+    {"auto": "map", "map": "MAP_POKEMON_MANSION_1F"},
+    {"auto": "map", "map": "MAP_POKEMON_MANSION_2F"},
+    {"kind": "story", "text": "3F: press the statue switch, drop through the hole in the floor to reach 1F's sealed south part, then take the stairs down.", "map": "MAP_POKEMON_MANSION_3F"},
+    {"auto": "map", "map": "MAP_POKEMON_MANSION_3F"},
+    {"kind": "item", "text": "B1F: the Secret Key (item ball) unlocks Cinnabar Gym. Also grab TM14 Blizzard and the other items.", "map": "MAP_POKEMON_MANSION_B1F", "items": ["ITEM_SECRET_KEY"]},
+    {"auto": "map", "map": "MAP_POKEMON_MANSION_B1F"},
+    {"kind": "tip", "text": "Blaine: Growlithe Lv.42, Ponyta Lv.40, Rapidash Lv.42, Arcanine Lv.47 (Fire Blast, Extreme Speed). Water/Rock/Ground; Lapras, Gyarados, Blastoise, Rhydon. Answer the gym quiz right to skip trainers (wrong answers force a battle)."},
+    {"auto": "trainers", "map": "MAP_CINNABAR_ISLAND_GYM", "exclude": ["TRAINER_LEADER_BLAINE"]},
+    {"kind": "boss", "text": "Gym Leader Blaine. Volcano Badge and TM38 Fire Blast.", "map": "MAP_CINNABAR_ISLAND_GYM", "trainers": ["TRAINER_LEADER_BLAINE"], "badge": 7, "items": ["ITEM_TM38"]},
+    {"kind": "story", "text": "Bill meets you outside the gym and invites you to the Sevii Islands. Accept: the boat from Cinnabar's harbor goes to One Island (chapter 13). You can decline and come back later.", "map": "MAP_CINNABAR_ISLAND"}
+  ]
+}

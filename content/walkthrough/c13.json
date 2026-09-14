@@ -1,0 +1,31 @@
+{
+  "id": "c13", "n": 13, "title": "Sevii Islands: One, Two & Three", "subtitle": "Meteorite delivery, Rock Smash, Moltres, save Lostelle",
+  "guidePart": 14,
+  "maps": ["MAP_ONE_ISLAND", "MAP_ONE_ISLAND_TREASURE_BEACH", "MAP_ONE_ISLAND_KINDLE_ROAD", "MAP_ONE_ISLAND_KINDLE_ROAD_EMBER_SPA", "MAP_MT_EMBER_EXTERIOR", "MAP_MT_EMBER_SUMMIT", "MAP_TWO_ISLAND", "MAP_TWO_ISLAND_CAPE_BRINK", "MAP_THREE_ISLAND", "MAP_THREE_ISLAND_DUNSPARCE_TUNNEL", "MAP_THREE_ISLAND_BOND_BRIDGE", "MAP_THREE_ISLAND_BERRY_FOREST"],
+  "steps": [
+    {"kind": "gift", "text": "One Island Pokémon Network Center: Bill introduces Celio. Bill hands you the Meteorite to deliver to the Game Corner owner on Two Island; Celio gives the Tri-Pass so the ferry runs between Islands One–Three.", "map": "MAP_ONE_ISLAND", "items": ["ITEM_METEORITE", "ITEM_TRI_PASS"]},
+    {"kind": "story", "text": "Treasure Beach (south of One Island, Surf): eight hidden items in the sand, refreshing over time.", "map": "MAP_ONE_ISLAND_TREASURE_BEACH"},
+    {"auto": "map", "map": "MAP_ONE_ISLAND_TREASURE_BEACH"},
+    {"kind": "story", "text": "Kindle Road (north): long strip of trainers and a hot spring.", "map": "MAP_ONE_ISLAND_KINDLE_ROAD"},
+    {"auto": "map", "map": "MAP_ONE_ISLAND_KINDLE_ROAD"},
+    {"kind": "gift", "text": "Ember Spa: the old man inside gives HM06 Rock Smash. It also heals your party.", "map": "MAP_ONE_ISLAND_KINDLE_ROAD_EMBER_SPA", "items": ["ITEM_HM06"], "hm": 6},
+    {"kind": "story", "text": "Mt. Ember exterior: Rock Smash and Strength open the way up. Explosion tutor here (once). Two Rocket Grunts guard the Ruby path but it is closed until after the Elite Four.", "map": "MAP_MT_EMBER_EXTERIOR"},
+    {"auto": "map", "map": "MAP_MT_EMBER_EXTERIOR"},
+    {"kind": "missable", "text": "Mt. Ember summit: Moltres Lv.50 (Fire/Flying, weak to Rock ×4). One-time; save, then Rock Slide/Surf and Ultra Balls.", "map": "MAP_MT_EMBER_SUMMIT", "pokemon": ["Moltres"]},
+    {"kind": "story", "text": "Two Island: the Game Corner owner is too worried to take the Meteorite; his daughter Lostelle is missing on Three Island. The market stall sells rare items as you progress.", "map": "MAP_TWO_ISLAND"},
+    {"auto": "items", "map": "MAP_TWO_ISLAND"},
+    {"kind": "story", "text": "Cape Brink (north of Two Island): hidden items; the house has a tutor who teaches Frenzy Plant / Blast Burn / Hydro Cannon to a fully evolved starter with max friendship (post-game).", "map": "MAP_TWO_ISLAND_CAPE_BRINK"},
+    {"auto": "map", "map": "MAP_TWO_ISLAND_CAPE_BRINK"},
+    {"kind": "story", "text": "Three Island: Bikers harass the town. Beat the gang (four battles); a resident then gives a Full Restore.", "map": "MAP_THREE_ISLAND", "items": ["ITEM_FULL_RESTORE"]},
+    {"auto": "map", "map": "MAP_THREE_ISLAND"},
+    {"kind": "gift", "text": "Three Isle Path / Dunsparce Tunnel (Rock Smash): the man inside gives a Nugget; Dunsparce lives here.", "map": "MAP_THREE_ISLAND_DUNSPARCE_TUNNEL", "items": ["ITEM_NUGGET"], "pokemon": ["Dunsparce"]},
+    {"auto": "hidden", "map": "MAP_THREE_ISLAND_DUNSPARCE_TUNNEL"},
+    {"kind": "story", "text": "Bond Bridge (west of Three Island): trainers over the water, Berry Forest at the end.", "map": "MAP_THREE_ISLAND_BOND_BRIDGE"},
+    {"auto": "map", "map": "MAP_THREE_ISLAND_BOND_BRIDGE"},
+    {"kind": "story", "text": "Berry Forest: 13 hidden berries (they regrow) plus items. Find Lostelle in the northwest corner.", "map": "MAP_THREE_ISLAND_BERRY_FOREST"},
+    {"kind": "missable", "text": "A Hypno Lv.30 attacks Lostelle; one-time encounter (catchable). Then she gives an Iapapa Berry and goes home.", "map": "MAP_THREE_ISLAND_BERRY_FOREST", "pokemon": ["Hypno"], "items": ["ITEM_IAPAPA_BERRY"]},
+    {"auto": "map", "map": "MAP_THREE_ISLAND_BERRY_FOREST"},
+    {"kind": "gift", "text": "Back on Two Island: Lostelle's father takes the Meteorite and gives a Moon Stone.", "map": "MAP_TWO_ISLAND", "items": ["ITEM_MOON_STONE"]},
+    {"kind": "story", "text": "Return to Celio on One Island, then take the ferry back to Vermilion (or Cinnabar) to continue the Kanto story.", "map": "MAP_ONE_ISLAND"}
+  ]
+}
