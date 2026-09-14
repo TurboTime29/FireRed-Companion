@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { getDb } from '../data/db'
 import { exportProgress, useProgress, type ProgressDoc } from '../store/progress'
 import { useSettings } from '../store/settings'
-import { clearCloud, signIn, signOut, syncEnabled, useSession, useSyncStatus } from '../lib/sync'
+import { clearCloud, signIn, signOut, syncEnabled, useSession, useSyncStatus, verifyCode } from '../lib/sync'
 import { inferStoryProgress, parseSave, type ParsedSave } from '../lib/save/gen3'
 import { PageTitle, Section, Sprite } from '../components/ui'
 
@@ -12,8 +12,19 @@ export default function SettingsPage() {
   const settings = useSettings()
   const session = useSession()
   const sync = useSyncStatus()
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(() => { try { return localStorage.getItem('firered-pending-email') ?? '' } catch { return '' } })
+  const [sent, setSent] = useState(() => { try { return !!localStorage.getItem('firered-pending-email') } catch { return false } })
+  const [code, setCode] = useState('')
+  const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState('')
+  const sendCode = async () => {
+    setBusy(true)
+    try { await signIn(email); try { localStorage.setItem('firered-pending-email', email) } catch { /* private mode */ } setSent(true); setMsg('') } catch (err) { setMsg((err as Error).message) } finally { setBusy(false) }
+  }
+  const verify = async () => {
+    setBusy(true)
+    try { await verifyCode(email, code); try { localStorage.removeItem('firered-pending-email') } catch { /* ignore */ } setSent(false); setCode(''); setMsg('Signed in.') } catch (err) { setMsg('Code not accepted: ' + (err as Error).message + '. Codes expire after a while; send a new one if needed.') } finally { setBusy(false) }
+  }
   const [parsed, setParsed] = useState<ParsedSave | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -48,10 +59,20 @@ export default function SettingsPage() {
       <PageTitle>Settings</PageTitle>
       <Section title="Cloud sync">
         {!syncEnabled && <p className="text-sm text-stone-500">Sync is not configured for this build (no Supabase keys). Progress stays in this browser; use export/import to move it.</p>}
-        {syncEnabled && !session && (
-          <form onSubmit={async (e) => { e.preventDefault(); try { await signIn(email); setMsg('Check your email for the sign-in link.') } catch (err) { setMsg((err as Error).message) } }} className="flex gap-2">
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="input" />
-            <button className="btn-primary">Send link</button>
+        {syncEnabled && !session && !sent && (
+          <form onSubmit={(e) => { e.preventDefault(); void sendCode() }} className="flex gap-2">
+            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="input" autoComplete="email" />
+            <button className="btn-primary shrink-0" disabled={busy}>{busy ? 'Sending…' : 'Send code'}</button>
+          </form>
+        )}
+        {syncEnabled && !session && sent && (
+          <form onSubmit={(e) => { e.preventDefault(); void verify() }} className="fade-up space-y-2">
+            <p className="text-sm">Email sent to <b>{email}</b>. Paste the <b>one-time code</b> from it below. (The link in the email also works on a computer, but on a home-screen app it opens Safari instead, so use the code.)</p>
+            <div className="flex gap-2">
+              <input value={code} onChange={(e) => setCode(e.target.value)} inputMode="numeric" autoComplete="one-time-code" placeholder="123456" className="input font-mono text-lg tracking-[0.3em]" autoFocus />
+              <button className="btn-primary shrink-0" disabled={busy || code.trim().length < 6}>{busy ? 'Checking…' : 'Verify'}</button>
+            </div>
+            <div className="flex gap-2 text-xs"><button type="button" className="link" onClick={() => void sendCode()} disabled={busy}>Resend code</button><button type="button" className="link" onClick={() => { setSent(false); setCode(''); try { localStorage.removeItem('firered-pending-email') } catch { /* ignore */ } }}>Use a different email</button></div>
           </form>
         )}
         {syncEnabled && session && <div className="flex items-center gap-2 text-sm"><span>Signed in as {session.user.email}</span><span className={`chip ${sync.status === 'synced' ? 'bg-emerald-600 text-white' : sync.status === 'error' ? 'bg-red-600 text-white' : 'bg-stone-300'}`}>{sync.status}</span>{sync.msg && <span className="text-xs text-red-600">{sync.msg}</span>}<button className="btn-ghost ml-auto text-xs" onClick={() => signOut()}>Sign out</button></div>}

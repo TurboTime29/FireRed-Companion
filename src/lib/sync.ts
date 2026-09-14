@@ -22,9 +22,17 @@ export function useSyncStatus() {
   return s
 }
 
+/** Sends the sign-in email. With the Supabase "Magic Link" template including {{ .Token }}, the same email carries a one-time code. */
 export async function signIn(email: string) {
   if (!supabase) throw new Error('sync disabled')
   const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + window.location.pathname } })
+  if (error) throw error
+}
+
+/** Completes sign-in with the code from the email: works inside an installed PWA where a link would open Safari instead. */
+export async function verifyCode(email: string, code: string) {
+  if (!supabase) throw new Error('sync disabled')
+  const { error } = await supabase.auth.verifyOtp({ email, token: code.replace(/\s+/g, ''), type: 'email' })
   if (error) throw error
 }
 export async function signOut() { await supabase?.auth.signOut() }
