@@ -57,6 +57,7 @@ function MonEditor({ mon, onSave, onCancel }: { mon: Partial<OwnedMon>; onSave: 
   const [nature, setNature] = useState(mon.nature ?? '')
   const [ability, setAbility] = useState<number | undefined>(mon.ability)
   const [inParty, setInParty] = useState(mon.inParty ?? true)
+  const [shiny, setShiny] = useState(!!mon.shiny)
   const [autoMoves, setAutoMoves] = useState(!mon.species)
   const p = species ? db.pokemonById.get(species) : null
   const changeLevel = (v: number) => {
@@ -80,10 +81,11 @@ function MonEditor({ mon, onSave, onCancel }: { mon: Partial<OwnedMon>; onSave: 
           <div className="flex flex-wrap items-center gap-2">
             <label className="flex-1 text-xs">Held item<select value={item ?? ''} onChange={(e) => setItem(e.target.value ? Number(e.target.value) : undefined)} className="input"><option value="">none</option>{holdables.map((i) => <option key={i.id} value={i.id}>{i.name}</option>)}</select></label>
             <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={inParty} onChange={(e) => setInParty(e.target.checked)} className="accent-red-700" /> In party</label>
+            <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={shiny} onChange={(e) => setShiny(e.target.checked)} className="accent-red-700" /> ✨ Shiny</label>
           </div>
           <div className="flex justify-end gap-2">
             <button className="btn-ghost" onClick={onCancel}>Cancel</button>
-            <button className="btn-primary" onClick={() => onSave({ species: p.id, level, nickname: nick || undefined, moves: moves.filter((x): x is number => !!x), item, nature: nature || undefined, ability, inParty })}>Save</button>
+            <button className="btn-primary" onClick={() => onSave({ species: p.id, level, nickname: nick || undefined, moves: moves.filter((x): x is number => !!x), item, nature: nature || undefined, ability, inParty, shiny, ivs: mon.ivs, evs: mon.evs, gender: mon.gender, note: mon.note })}>Save</button>
           </div>
         </>
       )}
@@ -103,10 +105,10 @@ function MonCard({ mon, onEdit }: { mon: OwnedMon; onEdit: () => void }) {
   return (
     <div className="card p-3">
       <div className="flex gap-3">
-        <Link to={`/dex/${p.id}`}><Sprite id={p.id} size={64} /></Link>
+        <Link to={`/dex/${p.id}`}><Sprite id={p.id} size={64} shiny={!!mon.shiny} /></Link>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <b>{mon.nickname || p.name}</b>{mon.nickname && <span className="text-xs text-stone-500">({p.name})</span>}
+            <b>{mon.nickname || p.name}</b>{mon.shiny && <span title="shiny">✨</span>}{mon.nickname && <span className="text-xs text-stone-500">({p.name})</span>}
             <span className="text-sm text-stone-500">Lv.{mon.level}</span>
             {p.types.map((t) => <TypeBadge key={t} type={t} small />)}
             {mon.item && <span className="inline-flex items-center gap-1 text-xs"><ItemSprite item={db.itemById.get(mon.item)!} size={18} />{db.itemById.get(mon.item)?.name}</span>}

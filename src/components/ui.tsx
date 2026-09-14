@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { getDb, spriteUrl } from '../data/db'
 import type { Item, Move, Pokemon, Trainer, TypeName } from '../data/types'
 import { moveCategory } from '../lib/battle'
-import { useSettings } from '../store/settings'
+import { useShinySpecies } from '../lib/shiny'
 
 export function Section({ title, children, right, className = '' }: { title?: ReactNode; children: ReactNode; right?: ReactNode; className?: string }) {
   return (
@@ -42,9 +42,10 @@ export function TypeBadge({ type, small }: { type: TypeName; small?: boolean }) 
   )
 }
 
-export function Sprite({ id, size = 48, back, className = '' }: { id: number; size?: number; back?: boolean; className?: string }) {
-  const shiny = useSettings((s) => s.showShiny)
-  return <img src={spriteUrl.pokemon(id, back ? 'back' : shiny ? 'shiny' : 'front')} width={size} height={size} className={`sprite ${className}`} alt="" loading="lazy" />
+export function Sprite({ id, size = 48, back, className = '', shiny }: { id: number; size?: number; back?: boolean; className?: string; shiny?: boolean }) {
+  const owned = useShinySpecies()
+  const isShiny = shiny ?? owned.has(id)
+  return <img src={spriteUrl.pokemon(id, back ? 'back' : isShiny ? 'shiny' : 'front')} width={size} height={size} className={`sprite ${className}`} alt="" loading="lazy" title={isShiny ? 'shiny' : undefined} />
 }
 
 export function ItemSprite({ item, size = 24 }: { item: Item; size?: number }) {

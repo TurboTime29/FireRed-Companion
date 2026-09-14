@@ -83,7 +83,7 @@ export default function SettingsPage() {
       <Section title="Display">
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <label>Theme <select value={settings.theme} onChange={(e) => settings.setTheme(e.target.value as never)} className="input inline w-auto py-1"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
-          <label className="flex items-center gap-1"><input type="checkbox" checked={settings.showShiny} onChange={(e) => settings.setShowShiny(e.target.checked)} className="accent-red-700" /> Shiny sprites</label>
+          <label className="flex items-center gap-1" title="Pokémon you own as shiny (and their pre-evolutions) use their shiny sprite"><input type="checkbox" checked={settings.showShiny} onChange={(e) => settings.setShowShiny(e.target.checked)} className="accent-red-700" /> Show my shinies as shiny</label>
           <label>Trainer name <input value={prog.playerName} onChange={(e) => prog.setPlayerName(e.target.value)} className="input inline w-32 py-1" /></label>
         </div>
       </Section>
