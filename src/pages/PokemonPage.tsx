@@ -43,6 +43,7 @@ export default function PokemonPage() {
   const p = db.pokemonById.get(id)
   const [tab, setTab] = useState<'level' | 'tm' | 'tutor' | 'egg'>('level')
   const [lvl, setLvl] = useState(50)
+  const [previewShiny, setPreviewShiny] = useState(false)
   const caught = useProgress((s) => s.caught.includes(id))
   const seen = useProgress((s) => s.seen.includes(id))
   const markCaught = useProgress((s) => s.markCaught)
@@ -65,8 +66,11 @@ export default function PokemonPage() {
       <div className="mb-2 flex justify-between text-sm">{prev ? <Link className="link" to={`/dex/${prev.id}`}>← #{prev.id} {prev.name}</Link> : <span />}{next ? <Link className="link" to={`/dex/${next.id}`}>#{next.id} {next.name} →</Link> : <span />}</div>
       <div className="card mb-3 flex flex-col gap-3 p-3 sm:flex-row">
         <div className="flex items-center justify-center gap-2 sm:w-48">
-          {isShiny ? <Sprite id={id} size={160} className="h-40 w-40" /> : <img src={spriteUrl.artwork(id)} alt={p.name} className="h-40 w-40 object-contain" loading="lazy" />}
-          <div className="flex flex-col"><Sprite id={id} size={56} shiny={false} /><Sprite id={id} size={56} back /></div>
+          {isShiny || previewShiny ? <Sprite id={id} size={160} className="h-40 w-40" shiny /> : <img src={spriteUrl.artwork(id)} alt={p.name} className="h-40 w-40 object-contain" loading="lazy" />}
+          <div className="flex flex-col items-center gap-1 text-[10px] text-stone-500">
+            <Sprite id={id} size={56} shiny={false} /><span>normal</span>
+            <button type="button" onClick={() => setPreviewShiny(!previewShiny)} className={`rounded-lg p-0.5 ring-2 ${previewShiny || isShiny ? 'ring-amber-400' : 'ring-transparent hover:ring-stone-400'}`} title="Preview the shiny colours"><Sprite id={id} size={56} shiny /></button><span>✨ shiny{previewShiny || isShiny ? '' : ' · tap'}</span>
+          </div>
         </div>
         <div className="flex-1">
           <PageTitle sub={<>#{String(id).padStart(3, '0')} · {p.category} Pokémon · {p.height} m · {p.weight} kg</>} right={
