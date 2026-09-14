@@ -14,6 +14,6 @@
     {"kind": "boss", "text": "Bruno round 2: Steelix Lv.65 ×2 (Fire/Water/Ground/Fighting), Hitmonchan Lv.65, Hitmonlee Lv.65, Machamp Lv.68.", "map": "MAP_POKEMON_LEAGUE_BRUNOS_ROOM", "trainers": ["TRAINER_ELITE_FOUR_BRUNO_2"]},
     {"kind": "boss", "text": "Agatha round 2: Gengar Lv.66 and Lv.70, Crobat Lv.66, Misdreavus Lv.65, Arbok Lv.68.", "map": "MAP_POKEMON_LEAGUE_AGATHAS_ROOM", "trainers": ["TRAINER_ELITE_FOUR_AGATHA_2"]},
     {"kind": "boss", "text": "Lance round 2: Gyarados Lv.68, Dragonite Lv.66 and Lv.72, Kingdra Lv.66 (only Dragon hurts it much), Aerodactyl Lv.70.", "map": "MAP_POKEMON_LEAGUE_LANCES_ROOM", "trainers": ["TRAINER_ELITE_FOUR_LANCE_2"]},
-    {"kind": "boss", "text": "Champion rematch: Heracross Lv.72, Alakazam Lv.73, Tyranitar Lv.72, two of Arcanine/Gyarados/Exeggutor Lv.73, starter Lv.75.", "map": "MAP_POKEMON_LEAGUE_CHAMPIONS_ROOM", "battleGroup": "champion-rematch"}
+    {"kind": "boss", "text": "Champion rematch: Heracross Lv.72, Alakazam Lv.73, Tyranitar Lv.72, two of Arcanine/Gyarados/Exeggutor Lv.73, starter Lv.75.", "map": "MAP_POKEMON_LEAGUE_CHAMPIONS_ROOM", "battleGroup": "champion-rematch", "flag": "FLAG_FOUGHT_MEWTWO"}
   ]
 }

@@ -15,6 +15,6 @@
     {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_B3F"},
     {"kind": "missable", "text": "B4F: Articuno Lv.50 (Ice/Flying). One-time: save, use Rock/Electric/Fire to whittle, sleep it, Ultra Balls. Weak to Rock ×4.", "map": "MAP_SEAFOAM_ISLANDS_B4F", "pokemon": ["Articuno"]},
     {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_B4F"},
-    {"kind": "story", "text": "Exit and surf west along Route 20 to Cinnabar Island.", "map": "MAP_ROUTE20"}
+    {"kind": "story", "text": "Exit and surf west along Route 20 to Cinnabar Island.", "map": "MAP_ROUTE20", "flag": "FLAG_FOUGHT_ARTICUNO"}
   ]
 }

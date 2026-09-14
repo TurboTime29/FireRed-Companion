@@ -582,7 +582,9 @@ dump("gifts_raw.json", gifts)
 from cparse import defines_eval
 all_flags = defines_eval("include/constants/flags.h", seed=OPP)
 used = {b["flag"] for l in locations.values() for b in l["items"] + l["hiddenItems"]}
-flags_out = {k: v for k, v in all_flags.items() if k in used or k.startswith(("FLAG_GOT_", "FLAG_BADGE", "FLAG_BEAT_", "FLAG_DEFEATED_", "FLAG_SYS_", "FLAG_RESCUED_", "FLAG_OAK_", "FLAG_DELIVERED_"))}
+ENCOUNTER_FLAGS = {"FLAG_HIDE_ROUTE_12_SNORLAX", "FLAG_HIDE_ROUTE_16_SNORLAX", "FLAG_HIDE_MOLTRES", "FLAG_HIDE_ZAPDOS", "FLAG_HIDE_ARTICUNO", "FLAG_HIDE_MEWTWO",
+                   "FLAG_HIDE_POWER_PLANT_ELECTRODE_1", "FLAG_HIDE_POWER_PLANT_ELECTRODE_2"}
+flags_out = {k: v for k, v in all_flags.items() if k in used or k in ENCOUNTER_FLAGS or k.startswith(("FLAG_GOT_", "FLAG_BADGE", "FLAG_BEAT_", "FLAG_DEFEATED_", "FLAG_SYS_", "FLAG_RESCUED_", "FLAG_OAK_", "FLAG_DELIVERED_", "FLAG_FOUGHT_", "FLAG_WOKE_UP_"))}
 trainer_flags_start = all_flags.get("TRAINER_FLAGS_START", 0x500)
 print(f"  {len(flags_out)} event flags exported (trainer flags start at {hex(trainer_flags_start)})")
 

@@ -26,6 +26,6 @@
     {"kind": "missable", "text": "A Hypno Lv.30 attacks Lostelle; one-time encounter (catchable). Then she gives an Iapapa Berry and goes home.", "map": "MAP_THREE_ISLAND_BERRY_FOREST", "pokemon": ["Hypno"], "items": ["ITEM_IAPAPA_BERRY"]},
     {"auto": "map", "map": "MAP_THREE_ISLAND_BERRY_FOREST"},
     {"kind": "gift", "text": "Back on Two Island: Lostelle's father takes the Meteorite and gives a Moon Stone.", "map": "MAP_TWO_ISLAND", "items": ["ITEM_MOON_STONE"]},
-    {"kind": "story", "text": "Return to Celio on One Island, then take the ferry back to Vermilion (or Cinnabar) to continue the Kanto story.", "map": "MAP_ONE_ISLAND"}
+    {"kind": "story", "text": "Return to Celio on One Island, then take the ferry back to Vermilion (or Cinnabar) to continue the Kanto story.", "map": "MAP_ONE_ISLAND", "flag": "FLAG_FOUGHT_MOLTRES"}
   ]
 }
