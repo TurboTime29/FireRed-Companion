@@ -20,7 +20,7 @@ export default function MissablesPage() {
           <li>Eevee (Celadon), Lapras (Silph Co.), Magikarp (Route 4 Center), Aerodactyl (Old Amber), Togepi egg (Five Island) are single gifts.</li>
           <li>The two Snorlax, three legendary birds, Mewtwo, Hypno (Berry Forest) and the ghost Marowak are one-time encounters: save before them.</li>
           <li>Kadabra, Machoke, Graveler, Haunter, Onix (Metal Coat), Scyther (Metal Coat), Porygon (Up-Grade), Seadra (Dragon Scale), Poliwhirl/Slowpoke (King's Rock) need a trade to evolve.</li>
-          <li>Gloom→Bellossom needs a Sun Stone (Hoenn trade only). The Sandshrew, Vulpix, Bellsprout, Slowpoke, Staryu, Magmar and Pinsir lines are LeafGreen-only: trade for them.</li>
+          <li>Not obtainable in FireRed without trading: the Sandshrew, Vulpix, Bellsprout, Slowpoke, Staryu, Magmar and Pinsir lines (the Pokédex hides them by default and tags them "trade only"). Gloom→Bellossom needs a Sun Stone, also trade-only.</li>
           <li>Legendaries and gift Pokémon are all shiny-huntable by soft reset: see <Link className="link" to="/encounters">Legendaries & encounters</Link> for the save points.</li>
           <li>You need 60 Kanto Pokémon caught for the National Dex, and a Ruby + Sapphire from the Sevii quest to trade with Ruby/Sapphire/Emerald.</li>
         </ul>

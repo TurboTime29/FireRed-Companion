@@ -205,6 +205,8 @@ def prose_paragraphs(text):
             lines.append(strip_markup(line))
         p = " ".join(l for l in lines if l)
         p = re.sub(r"\s+", " ", p).strip()
+        # FireRed-only guide: drop sentences that talk about LeafGreen specifically
+        p = " ".join(x for x in re.split(r"(?<=[.!?])\s+", p) if "LeafGreen" not in x or "FireRed" in x).strip()
         if len(p) > 1 and not p.startswith("Category:") and not p.startswith("FRLG header") and not p.startswith("header "):
             paras.append(p)
     return paras

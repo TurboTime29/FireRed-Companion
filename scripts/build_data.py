@@ -543,6 +543,13 @@ for rec in gifts:
     if "species" in rec and rec["cmd"] in ("givemon", "giveegg", "setwildbattle"):
         method = {"givemon": "gift", "giveegg": "egg", "setwildbattle": "static"}[rec["cmd"]]
         pokemon[rec["species"]].setdefault("locations", []).append({"map": rec["map"], "method": method, "rate": 100, "min": rec.get("level", 5), "max": rec.get("level", 5)})
+# how each species is obtained in FireRed: wild | gift | evolution | trade-only | event
+SCRIPTED_GIFTS = {1, 4, 7, 138, 140, 142, 106, 107, 63, 35, 123, 147, 137}  # starters, fossils, Hitmons, Game Corner prizes
+for p in pokemon.values():
+    if p.get("locations"):
+        p["availability"] = "gift" if all(l["method"] in ("gift", "egg") for l in p["locations"]) else "wild"
+    elif p["id"] in SCRIPTED_GIFTS:
+        p["availability"] = "gift"
 # in-game trades
 trades = []
 txt = read("src/data/ingame_trades.h")
@@ -551,6 +558,25 @@ for key, b in struct_blocks(txt, r"INGAME_TRADE_\w+"):
     f = fields(b)
     trades.append({"key": key, "give": species_const_to_nat[f["requestedSpecies"].strip()], "get": species_const_to_nat[f["species"].strip()],
                    "nickname": re.search(r'"(.*?)"', f["nickname"]).group(1), "item": ITEM_BY_KEY.get(f.get("heldItem", "").strip())})
+for t in trades:
+    pokemon[t["get"]].setdefault("availability", "gift")
+changed = True
+while changed:
+    changed = False
+    for p in pokemon.values():
+        if p.get("availability") and p["availability"] != "trade-only":
+            for e in p["evolutions"]:
+                if e["to"] and not pokemon[e["to"]].get("availability") and e["method"] not in ("trade", "trade_item", "friendship_day", "friendship_night", "beauty"):
+                    pokemon[e["to"]]["availability"] = "evolution"; changed = True
+for p in pokemon.values():
+    if p.get("availability") and p["availability"] != "trade-only":
+        for e in p["evolutions"]:
+            if e["to"] and not pokemon[e["to"]].get("availability") and e["method"] in ("trade", "trade_item"):
+                pokemon[e["to"]]["availability"] = "trade-evolution"
+for p in pokemon.values():
+    if not p.get("availability"):
+        p["availability"] = "event" if p["id"] in (151, 249, 250, 251, 385, 386) else "trade-only"
+print("  availability:", {k: sum(1 for p in pokemon.values() if p["availability"] == k) for k in ("wild", "gift", "evolution", "trade-evolution", "trade-only", "event")})
 n_balls = sum(len(l["items"]) for l in locations.values())
 n_hidden = sum(len(l["hiddenItems"]) for l in locations.values())
 print(f"  {len(locations)} maps, {n_balls} item balls, {n_hidden} hidden items, {len(gifts)} gift/static records, {len(trades)} trades")

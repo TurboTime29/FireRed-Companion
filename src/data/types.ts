@@ -44,6 +44,8 @@ export interface Pokemon {
   heldItems: number[]
   safariFlee: number
   locations?: EncounterRef[]
+  /** how it is obtained in FireRed */
+  availability: 'wild' | 'gift' | 'evolution' | 'trade-evolution' | 'trade-only' | 'event'
 }
 
 export interface Move {

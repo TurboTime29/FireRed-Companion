@@ -10,7 +10,7 @@
     {"auto": "map", "map": "MAP_ROCK_TUNNEL_B1F"},
     {"kind": "story", "text": "Route 10 south exits into Lavender Town. The Name Rater is here; the Volunteer Pokémon House tells you Mr. Fuji went to the Tower.", "map": "MAP_LAVENDER_TOWN"},
     {"kind": "tip", "text": "Pokémon Tower is blocked by the ghost of Marowak on 6F until you have the Silph Scope from the Rocket Hideout in Celadon (chapter 8). You can fight the rival on 2F now if you like."},
-    {"kind": "story", "text": "Route 8 (west of Lavender): trainers, Growlithe and Vulpix (Vulpix is LeafGreen-only) in the grass. Saffron's gate guard is still thirsty: take the Underground Path.", "map": "MAP_ROUTE8", "pokemon": ["Growlithe", "Abra"]},
+    {"kind": "story", "text": "Route 8 (west of Lavender): trainers, Growlithe in the grass. Saffron's gate guard is still thirsty: take the Underground Path.", "map": "MAP_ROUTE8", "pokemon": ["Growlithe", "Abra"]},
     {"auto": "map", "map": "MAP_ROUTE8"},
     {"kind": "story", "text": "Underground Path (east-west tunnel): seven recurring hidden items along the lamps; Itemfinder territory.", "map": "MAP_UNDERGROUND_PATH_EAST_WEST_TUNNEL"},
     {"auto": "map", "map": "MAP_UNDERGROUND_PATH_EAST_WEST_TUNNEL"},

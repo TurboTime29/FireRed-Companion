@@ -9,7 +9,7 @@
     {"kind": "boss", "text": "Walk north toward Nugget Bridge: Rival battle 3. Pidgeotto Lv.17, Abra Lv.16, Rattata Lv.15, starter Lv.18. Abra only Teleports. He gives you the Fame Checker afterwards.", "map": "MAP_CERULEAN_CITY", "battleGroup": "rival-cerulean", "items": ["ITEM_FAME_CHECKER"]},
     {"kind": "story", "text": "Nugget Bridge (Route 24): five trainers in a row, then a Rocket Grunt who hands over a Nugget and offers you a job. Decline and beat him.", "map": "MAP_ROUTE24", "items": ["ITEM_NUGGET"]},
     {"auto": "map", "map": "MAP_ROUTE24"},
-    {"kind": "story", "text": "Route 25: winding path of trainers to Bill's Sea Cottage. Oddish/Bellsprout (Bellsprout is LeafGreen-only), Abra, Kakuna, Metapod in the grass.", "map": "MAP_ROUTE25", "pokemon": ["Abra", "Oddish"]},
+    {"kind": "story", "text": "Route 25: winding path of trainers to Bill's Sea Cottage. Oddish, Abra, Kakuna, Metapod in the grass.", "map": "MAP_ROUTE25", "pokemon": ["Abra", "Oddish"]},
     {"auto": "map", "map": "MAP_ROUTE25"},
     {"kind": "gift", "text": "Bill's Sea Cottage: talk to the Pokémon (Bill), use the PC to turn him back, then talk to him for the S.S. Ticket.", "map": "MAP_ROUTE25", "items": ["ITEM_SS_TICKET"]},
     {"kind": "tip", "text": "Misty: Staryu Lv.18, Starmie Lv.21 (Water Pulse, Rapid Spin, Recover). Electric or Grass hits hard. Starmie is fast and bulky; Pikachu, Oddish, Bulbasaur or a Grass/Electric move on Nidoran works. Be Lv.20+."},

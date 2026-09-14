@@ -4,7 +4,7 @@
   "maps": ["MAP_ROUTE19", "MAP_ROUTE20", "MAP_SEAFOAM_ISLANDS_1F", "MAP_SEAFOAM_ISLANDS_B1F", "MAP_SEAFOAM_ISLANDS_B2F", "MAP_SEAFOAM_ISLANDS_B3F", "MAP_SEAFOAM_ISLANDS_B4F"],
   "steps": [
     {"kind": "tip", "text": "You need Surf (Soul Badge) and Strength (Rainbow Badge) here. Bring an Electric or Grass type for the swimmers' Water teams."},
-    {"kind": "story", "text": "Route 19: surf south from Fuchsia past a crowd of Swimmers. Tentacool everywhere; Horsea, Krabby, Staryu (LG) by rod.", "map": "MAP_ROUTE19", "pokemon": ["Tentacool", "Horsea"]},
+    {"kind": "story", "text": "Route 19: surf south from Fuchsia past a crowd of Swimmers. Tentacool everywhere; Horsea and Krabby by rod.", "map": "MAP_ROUTE19", "pokemon": ["Tentacool", "Horsea"]},
     {"auto": "map", "map": "MAP_ROUTE19"},
     {"kind": "story", "text": "Route 20 east: more Swimmers, then the Seafoam Islands entrance.", "map": "MAP_ROUTE20"},
     {"auto": "map", "map": "MAP_ROUTE20"},

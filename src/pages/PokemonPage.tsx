@@ -74,7 +74,10 @@ export default function PokemonPage() {
             <b>Abilit{p.abilities.length > 1 ? 'ies' : 'y'}:</b> {p.abilities.map((a) => <span key={a.id} className="mr-2" title={a.text}>{a.name} <span className="text-stone-500">({a.text})</span></span>)}
           </div>
           <div className="mt-1 text-sm text-stone-600 dark:text-stone-300">Catch rate {p.catchRate} · Exp yield {p.expYield} · {p.growth} growth · {p.femaleRatio === null ? 'genderless' : `${100 - p.femaleRatio}% ♂ / ${p.femaleRatio}% ♀`} · Egg groups: {p.eggGroups.join(', ')}{p.heldItems.length ? <> · Wild held: {p.heldItems.map((i) => <ItemLink key={i} id={i} />)}</> : null}</div>
-          {!inFireRed && <div className="mt-2 rounded bg-amber-100 px-2 py-1 text-xs text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">Not found in the wild in FireRed{p.evolvesFrom ? ' — evolve it from ' + db.pokemonById.get(p.evolvesFrom)?.name : ' — needs a trade from another game'}.</div>}
+          {p.availability === 'trade-only' && <div className="mt-2 rounded bg-amber-100 px-2 py-1 text-xs text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">Not obtainable in FireRed. It only comes from a trade with another game{p.id <= 151 ? ' (LeafGreen has it)' : ''}.</div>}
+          {p.availability === 'event' && <div className="mt-2 rounded bg-amber-100 px-2 py-1 text-xs text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">Event-only Pokémon: not obtainable in normal play.</div>}
+          {p.availability === 'evolution' && !inFireRed && <div className="mt-2 text-xs text-stone-500">Not in the wild: evolve {db.pokemonById.get(p.evolvesFrom!)?.name}.</div>}
+          {p.availability === 'trade-evolution' && <div className="mt-2 rounded bg-sky-100 px-2 py-1 text-xs text-sky-900 dark:bg-sky-900/40 dark:text-sky-100">Only by trading {db.pokemonById.get(p.evolvesFrom!)?.name} to another game and back (link cable or wireless adapter).</div>}
         </div>
       </div>
 
