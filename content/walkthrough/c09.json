@@ -3,7 +3,7 @@
   "guidePart": 10,
   "maps": ["MAP_ROUTE12", "MAP_ROUTE13", "MAP_ROUTE14", "MAP_ROUTE15", "MAP_FUCHSIA_CITY", "MAP_FUCHSIA_CITY_WARDENS_HOUSE", "MAP_FUCHSIA_CITY_GYM", "MAP_SAFARI_ZONE_CENTER", "MAP_SAFARI_ZONE_EAST", "MAP_SAFARI_ZONE_NORTH", "MAP_SAFARI_ZONE_WEST", "MAP_ROUTE18", "MAP_ROUTE17", "MAP_ROUTE16"],
   "steps": [
-    {"kind": "missable", "text": "Route 12 (south of Lavender): play the Poké Flute next to Snorlax (Lv.30). One-time encounter — save first, use False Swipe/Sleep and Great Balls. Snorlax is a top-tier team member.", "map": "MAP_ROUTE12", "pokemon": ["Snorlax"], "flag": "FLAG_HIDE_ROUTE_12_SNORLAX"},
+    {"kind": "missable", "text": "Route 12 (south of Lavender): play the Poké Flute next to Snorlax (Lv.30). One-time encounter — save first, use False Swipe/Sleep and Great Balls. Snorlax is a top-tier team member.", "map": "MAP_ROUTE12", "pokemon": ["Snorlax"], "flag": "FLAG_HIDE_ROUTE_12_SNORLAX", "encounter": {"species": "Snorlax", "level": 30, "kind": "static", "legendary": true, "savePoint": "Save standing next to Snorlax before using the Poké Flute", "note": "One-time. Catch rate 25: bring Ultra Balls, False Swipe or sleep."}},
     {"kind": "gift", "text": "Lavender-side gate on Route 12, 2F: a girl gives TM27 Return if your lead Pokémon likes you enough.", "map": "MAP_ROUTE12", "items": ["ITEM_TM27"]},
     {"kind": "gift", "text": "Route 12 fishing house (on the pier): the Fishing Guru's brother gives the Super Rod. Show him big Magikarp for Net Balls.", "map": "MAP_ROUTE12", "items": ["ITEM_SUPER_ROD"]},
     {"auto": "map", "map": "MAP_ROUTE12"},
@@ -31,7 +31,7 @@
     {"auto": "map", "map": "MAP_ROUTE18"},
     {"kind": "story", "text": "Route 17 Cycling Road (needs the Bicycle): Bikers and Cue Balls, five hidden items along the slope.", "map": "MAP_ROUTE17"},
     {"auto": "map", "map": "MAP_ROUTE17"},
-    {"kind": "missable", "text": "Route 16: the second Snorlax (Lv.30) blocks the road toward Celadon. Poké Flute, save, catch.", "map": "MAP_ROUTE16", "pokemon": ["Snorlax"], "flag": "FLAG_HIDE_ROUTE_16_SNORLAX"},
+    {"kind": "missable", "text": "Route 16: the second Snorlax (Lv.30) blocks the road toward Celadon. Poké Flute, save, catch.", "map": "MAP_ROUTE16", "pokemon": ["Snorlax"], "flag": "FLAG_HIDE_ROUTE_16_SNORLAX", "encounter": {"species": "Snorlax", "level": 30, "kind": "static", "legendary": true, "savePoint": "Save next to Snorlax before the Poké Flute", "note": "Second and last Snorlax in the game."}},
     {"kind": "gift", "text": "Route 16 northwest house (Cut the tree): the girl gives HM02 Fly. Teach it to Pidgeot/Fearow/Charizard and stop walking.", "map": "MAP_ROUTE16", "items": ["ITEM_HM02"], "hm": 2},
     {"kind": "gift", "text": "Route 16 south gate 2F: Amulet Coin from Oak's aide (40 species caught).", "map": "MAP_ROUTE16", "items": ["ITEM_AMULET_COIN"]},
     {"auto": "map", "map": "MAP_ROUTE16"}

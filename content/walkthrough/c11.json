@@ -13,7 +13,7 @@
     {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_B1F"},
     {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_B2F"},
     {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_B3F"},
-    {"kind": "missable", "text": "B4F: Articuno Lv.50 (Ice/Flying). One-time: save, use Rock/Electric/Fire to whittle, sleep it, Ultra Balls. Weak to Rock ×4.", "map": "MAP_SEAFOAM_ISLANDS_B4F", "pokemon": ["Articuno"], "flag": "FLAG_FOUGHT_ARTICUNO"},
+    {"kind": "missable", "text": "B4F: Articuno Lv.50 (Ice/Flying). One-time: save, use Rock/Electric/Fire to whittle, sleep it, Ultra Balls. Weak to Rock ×4.", "map": "MAP_SEAFOAM_ISLANDS_B4F", "pokemon": ["Articuno"], "flag": "FLAG_FOUGHT_ARTICUNO", "encounter": {"species": "Articuno", "level": 50, "kind": "legendary", "legendary": true, "savePoint": "Save on B4F right in front of Articuno (after the boulders stopped the current)", "note": "Catch rate 3. Sleep + Ultra Balls, or Timer Balls after 10 turns. Mind Sheer Cold."}},
     {"auto": "map", "map": "MAP_SEAFOAM_ISLANDS_B4F"},
     {"kind": "story", "text": "Exit and surf west along Route 20 to Cinnabar Island.", "map": "MAP_ROUTE20"}
   ]

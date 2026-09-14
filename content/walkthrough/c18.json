@@ -11,7 +11,7 @@
     {"kind": "story", "text": "Deliver the Sapphire to Celio on One Island: the Network Machine is fixed, enabling trades with Ruby/Sapphire/Emerald and opening Cerulean Cave (chapter 19).", "map": "MAP_ONE_ISLAND"},
     {"kind": "gift", "text": "Memorial Pillar (Surf south of Five Island): leave a Lemonade at the grave to receive TM42 Facade from the mourning trainer.", "map": "MAP_FIVE_ISLAND_MEMORIAL_PILLAR", "items": ["ITEM_TM42"]},
     {"auto": "map", "map": "MAP_FIVE_ISLAND_MEMORIAL_PILLAR"},
-    {"kind": "gift", "text": "Water Labyrinth (Surf west of Five Island): the man on the island gives a Togepi Egg if your lead Pokémon has high friendship. One-time.", "map": "MAP_FIVE_ISLAND_WATER_LABYRINTH", "pokemon": ["Togepi"]},
+    {"kind": "gift", "text": "Water Labyrinth (Surf west of Five Island): the man on the island gives a Togepi Egg if your lead Pokémon has high friendship. One-time.", "map": "MAP_FIVE_ISLAND_WATER_LABYRINTH", "pokemon": ["Togepi"], "encounter": {"species": "Togepi", "level": 5, "kind": "gift", "legendary": false, "savePoint": "Save before talking to the man on the Water Labyrinth islet", "note": "Shiny is rolled when the egg is received."}},
     {"auto": "map", "map": "MAP_FIVE_ISLAND_WATER_LABYRINTH"},
     {"kind": "story", "text": "Resort Gorgeous (north): rich trainers; Selphy's butler asks you to find her in the Lost Cave.", "map": "MAP_FIVE_ISLAND_RESORT_GORGEOUS"},
     {"auto": "map", "map": "MAP_FIVE_ISLAND_RESORT_GORGEOUS"},

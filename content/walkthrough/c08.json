@@ -4,7 +4,7 @@
   "maps": ["MAP_CELADON_CITY", "MAP_CELADON_CITY_DEPARTMENT_STORE_2F", "MAP_CELADON_CITY_DEPARTMENT_STORE_3F", "MAP_CELADON_CITY_DEPARTMENT_STORE_4F", "MAP_CELADON_CITY_DEPARTMENT_STORE_5F", "MAP_CELADON_CITY_DEPARTMENT_STORE_ROOF", "MAP_CELADON_CITY_GYM", "MAP_CELADON_CITY_GAME_CORNER", "MAP_ROCKET_HIDEOUT_B1F", "MAP_ROCKET_HIDEOUT_B2F", "MAP_ROCKET_HIDEOUT_B3F", "MAP_ROCKET_HIDEOUT_B4F", "MAP_POKEMON_TOWER_2F", "MAP_POKEMON_TOWER_3F", "MAP_POKEMON_TOWER_4F", "MAP_POKEMON_TOWER_5F", "MAP_POKEMON_TOWER_6F", "MAP_POKEMON_TOWER_7F"],
   "steps": [
     {"kind": "gift", "text": "Celadon Mansion (northwest): the old woman on 1F gives Tea. Give it to any Saffron gate guard to open Saffron City.", "map": "MAP_CELADON_CITY", "items": ["ITEM_TEA"]},
-    {"kind": "gift", "text": "Celadon Mansion back door (enter from behind the building), climb to the roof room: a free Eevee Lv.25. Evolve with Fire/Water/Thunder Stone from the Department Store 4F.", "map": "MAP_CELADON_CITY", "pokemon": ["Eevee"]},
+    {"kind": "gift", "text": "Celadon Mansion back door (enter from behind the building), climb to the roof room: a free Eevee Lv.25. Evolve with Fire/Water/Thunder Stone from the Department Store 4F.", "map": "MAP_CELADON_CITY", "pokemon": ["Eevee"], "encounter": {"species": "Eevee", "level": 25, "kind": "gift", "legendary": false, "savePoint": "Save in front of the Poké Ball in the Mansion roof room", "note": "Soft reset on pickup."}},
     {"kind": "tutor", "text": "Softboiled Move Tutor in Celadon (near the Pokémon Center pond). Only Chansey, Blissey and Mew can learn it.", "map": "MAP_CELADON_CITY"},
     {"auto": "items", "map": "MAP_CELADON_CITY"},
     {"auto": "hidden", "map": "MAP_CELADON_CITY"},
@@ -36,7 +36,7 @@
     {"auto": "map", "map": "MAP_POKEMON_TOWER_3F"},
     {"auto": "map", "map": "MAP_POKEMON_TOWER_4F"},
     {"auto": "map", "map": "MAP_POKEMON_TOWER_5F"},
-    {"kind": "missable", "text": "6F: the ghost Marowak (Lv.30) attacks. It cannot be caught; just defeat it.", "map": "MAP_POKEMON_TOWER_6F", "pokemon": ["Marowak"]},
+    {"kind": "missable", "text": "6F: the ghost Marowak (Lv.30) attacks. It cannot be caught; just defeat it.", "map": "MAP_POKEMON_TOWER_6F", "pokemon": ["Marowak"], "encounter": {"species": "Marowak", "level": 30, "kind": "static", "legendary": false, "savePoint": "Cannot be caught, no hunt possible", "note": "Scripted battle only."}},
     {"auto": "map", "map": "MAP_POKEMON_TOWER_6F"},
     {"kind": "story", "text": "7F: three Rocket Grunts guard Mr. Fuji. Beat them and talk to him; he takes you to his house.", "map": "MAP_POKEMON_TOWER_7F"},
     {"auto": "map", "map": "MAP_POKEMON_TOWER_7F"},

@@ -3,6 +3,7 @@ import { getDb } from '../data/db'
 import { useParty, useProgress } from '../store/progress'
 import { chapterProgress, currentChapter, monAlerts, nextGymLeader, nextStep, readiness } from '../lib/selectors'
 import { KindChip, PageTitle, Section, Sprite, TypeBadge } from '../components/ui'
+import { EncounterCard, useEncounters } from '../components/EncounterCard'
 
 export default function Dashboard() {
   const db = getDb()
@@ -14,6 +15,8 @@ export default function Dashboard() {
   const leader = nextGymLeader(db, prog.badges)
   const r = leader ? readiness(db, party, leader) : null
   const kanto = prog.caught.filter((i) => i <= 151).length
+  const encounters = useEncounters()
+  const nextEncounters = encounters.filter((x) => !x.done && x.step.encounter!.kind !== 'wild' && x.chapter.n >= chapter.n && !x.step.encounter!.savePoint.startsWith('Event') && !x.step.encounter!.savePoint.startsWith('Cannot')).slice(0, 2)
   const missables = db.chapters.flatMap((c) => c.steps.filter((s) => s.kind === 'missable' && !prog.steps[s.id]).map((s) => ({ c, s }))).filter(({ c }) => c.n <= chapter.n).slice(0, 4)
   const areaItems = chapter.maps.flatMap((m) => { const l = db.locationById.get(m)!; return [...l.items.map((b) => ({ l, item: b.item, flag: b.flag, hidden: false })), ...l.hiddenItems.map((b) => ({ l, item: b.item, flag: b.flag, hidden: true }))] }).filter((x) => !prog.flags[x.flag])
   return (
@@ -60,6 +63,11 @@ export default function Dashboard() {
         </Section>
       </div>
 
+      {nextEncounters.length > 0 && (
+        <Section title="Next one-time encounters" right={<Link className="text-xs link" to="/encounters">all →</Link>}>
+          <div className="space-y-2">{nextEncounters.map((x) => <EncounterCard key={x.step.id} {...x} compact />)}</div>
+        </Section>
+      )}
       {missables.length > 0 && (
         <Section title="Don't miss" right={<Link className="text-xs link" to="/missables">all →</Link>}>
           {missables.map(({ c, s }) => <div key={s.id} className="text-sm">⚠ <Link className="link" to={`/guide/${c.id}`}>Ch.{c.n}</Link>: {s.text}</div>)}

@@ -123,6 +123,9 @@ def resolve(step):
         s["items"] = ids
     if "pokemon" in s:
         s["pokemon"] = [k if isinstance(k, int) else next(p["id"] for p in P.values() if p["name"].lower() == k.lower()) for k in s["pokemon"]]
+    if "encounter" in s and isinstance(s["encounter"].get("species"), str):
+        name = s["encounter"]["species"]
+        s["encounter"]["species"] = next(p["id"] for p in P.values() if p["name"].lower() == name.lower())
     if "map" in s and s["map"] not in L:
         raise SystemExit(f"unknown map {s['map']}")
     return s

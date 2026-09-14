@@ -5,6 +5,7 @@ import type { Step } from '../data/types'
 import { useParty, useProgress } from '../store/progress'
 import { chapterProgress, readiness, trainersForGroup } from '../lib/selectors'
 import { Check, Empty, ItemLink, LocationLink, PageTitle, PokemonLink, Section, Sprite } from '../components/ui'
+import { EncounterCard } from '../components/EncounterCard'
 
 function StepText({ s }: { s: Step }) {
   const db = getDb()
@@ -54,6 +55,11 @@ export default function ChapterPage() {
       <PageTitle sub={<>{c.subtitle} · {p.done}/{p.total} done</>} right={<button className="btn-ghost text-xs" onClick={() => setChapter(c.n)}>Set as current</button>}>Chapter {c.n}: {c.title}</PageTitle>
       <div className="mb-2 flex flex-wrap gap-1 text-xs">{c.maps.map((m) => <LocationLink key={m} id={m} className="chip bg-stone-200 no-underline dark:bg-stone-800" />)}</div>
 
+      {c.steps.some((s) => s.encounter && s.encounter.kind !== 'wild') && (
+        <Section title="Save before these" right={<Link className="text-xs link" to="/encounters">all encounters →</Link>}>
+          <div className="space-y-2">{c.steps.filter((s) => s.encounter && s.encounter.kind !== 'wild').map((s) => <EncounterCard key={s.id} chapter={c} step={s} done={!!steps[s.id]} compact />)}</div>
+        </Section>
+      )}
       {bosses.length > 0 && (
         <Section title="Boss check">
           {bosses.map((b) => {
@@ -80,7 +86,7 @@ export default function ChapterPage() {
           return (
             <div key={s.id}>
               {header && <div className="mt-3 mb-1 border-b border-stone-200 pb-0.5 text-xs font-semibold uppercase tracking-wide text-stone-500 dark:border-stone-800"><LocationLink id={header} /></div>}
-              <Check checked={!!steps[s.id]} onChange={(v) => done(s, v)} label={<StepText s={s} />} kind={s.kind === 'story' ? undefined : s.kind} sub={s.where} />
+              <Check checked={!!steps[s.id]} onChange={(v) => done(s, v)} label={<StepText s={s} />} kind={s.kind === 'story' ? undefined : s.kind} sub={s.encounter && s.encounter.kind !== 'wild' ? <span className="font-medium text-red-700 dark:text-red-400">💾 {s.encounter.savePoint}</span> : s.where} />
             </div>
           )
         })}

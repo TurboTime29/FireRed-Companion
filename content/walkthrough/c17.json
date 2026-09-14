@@ -13,7 +13,7 @@
     {"kind": "item", "text": "Icefall Cave (Surf north of Four Island): slide over the ice; HM07 Waterfall is on B1F.", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_B1F", "items": ["ITEM_HM07"], "hm": 7},
     {"auto": "map", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_1F"},
     {"auto": "map", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_B1F"},
-    {"kind": "story", "text": "Icefall Cave back room (use Waterfall): Lorelei helps you beat the Rocket Grunts, who reveal the second password. Wild Lapras can be caught in this cave.", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_BACK", "pokemon": ["Lapras"]},
+    {"kind": "story", "text": "Icefall Cave back room (use Waterfall): Lorelei helps you beat the Rocket Grunts, who reveal the second password. Wild Lapras can be caught in this cave.", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_BACK", "pokemon": ["Lapras"], "encounter": {"species": "Lapras", "level": 30, "kind": "wild", "legendary": false, "savePoint": "Wild in the Icefall Cave water; not one-time", "note": "Regular wild encounter, can be re-rolled by walking."}},
     {"auto": "map", "map": "MAP_FOUR_ISLAND_ICEFALL_CAVE_BACK"},
     {"kind": "story", "text": "Six Island: quiet town; a hidden item by the Center.", "map": "MAP_SIX_ISLAND"},
     {"auto": "map", "map": "MAP_SIX_ISLAND"},

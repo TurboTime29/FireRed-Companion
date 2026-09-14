@@ -7,7 +7,7 @@
     {"kind": "story", "text": "1F: weave through the rock maze to the ladders; items scattered on the ledges.", "map": "MAP_CERULEAN_CAVE_1F"},
     {"auto": "map", "map": "MAP_CERULEAN_CAVE_1F"},
     {"auto": "map", "map": "MAP_CERULEAN_CAVE_2F"},
-    {"kind": "missable", "text": "B1F: Mewtwo Lv.70 (Psychic, Recover, Swift, Safeguard). Save. Use the Master Ball, or paralyze it and throw Ultra Balls after lowering its HP with Bug/Ghost/Dark moves.", "map": "MAP_CERULEAN_CAVE_B1F", "pokemon": ["Mewtwo"], "flag": "FLAG_FOUGHT_MEWTWO"},
+    {"kind": "missable", "text": "B1F: Mewtwo Lv.70 (Psychic, Recover, Swift, Safeguard). Save. Use the Master Ball, or paralyze it and throw Ultra Balls after lowering its HP with Bug/Ghost/Dark moves.", "map": "MAP_CERULEAN_CAVE_B1F", "pokemon": ["Mewtwo"], "flag": "FLAG_FOUGHT_MEWTWO", "encounter": {"species": "Mewtwo", "level": 70, "kind": "legendary", "legendary": true, "savePoint": "Save on B1F in front of Mewtwo", "note": "Catch rate 3. Master Ball guarantees it; otherwise paralysis, low HP, Ultra/Timer Balls. It uses Recover."}},
     {"auto": "map", "map": "MAP_CERULEAN_CAVE_B1F"},
     {"kind": "tip", "text": "Once the Sevii quest is done the Elite Four use much stronger teams (Lv.63-75) with Johto/Hoenn Pokémon. Aim for Lv.70+."},
     {"kind": "boss", "text": "Lorelei round 2: Dewgong Lv.64, Cloyster Lv.63, Piloswine Lv.63, Jynx Lv.66, Lapras Lv.66.", "map": "MAP_POKEMON_LEAGUE_LORELEIS_ROOM", "trainers": ["TRAINER_ELITE_FOUR_LORELEI_2"]},

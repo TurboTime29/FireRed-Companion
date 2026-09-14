@@ -27,6 +27,7 @@ const SearchPage = lazy(() => import('./pages/SearchPage'))
 const TradesPage = lazy(() => import('./pages/TradesPage'))
 const MissablesPage = lazy(() => import('./pages/MissablesPage'))
 const TmPage = lazy(() => import('./pages/TmPage'))
+const EncountersPage = lazy(() => import('./pages/EncountersPage'))
 
 const tabs = [
   { to: '/', label: 'Home', icon: '🏠' },
@@ -99,6 +100,7 @@ export default function App() {
               <Route path="/types" element={<TypeChartPage />} />
               <Route path="/trades" element={<TradesPage />} />
               <Route path="/missables" element={<MissablesPage />} />
+              <Route path="/encounters" element={<EncountersPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/more" element={<MorePage />} />

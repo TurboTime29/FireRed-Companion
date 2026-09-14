@@ -12,6 +12,7 @@ export default function MorePage() {
     ['/tms', '💿', 'TMs & HMs', 'Every machine and its location'],
     ['/types', '🧭', 'Type chart', 'Gen 3 effectiveness and physical/special split'],
     ['/trades', '🔁', 'In-game trades', 'NPC trades and where they are'],
+    ['/encounters', '⭐', 'Legendaries & encounters', 'Every one-time Pokémon, where to save, shiny hunting'],
     ['/missables', '⚠', 'Missables', 'One-time choices and gifts'],
     ['/settings', '⚙', 'Settings & sync', 'Cloud sync, save import, export, theme'],
   ]

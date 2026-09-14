@@ -168,6 +168,17 @@ export interface Step {
   where?: string
   x?: number
   y?: number
+  encounter?: Encounter
+}
+
+export interface Encounter {
+  species: number
+  level: number
+  /** legendary = one-time roaming/static legendary; static = one-time non-legendary; gift = given by an NPC; wild = repeatable */
+  kind: 'legendary' | 'static' | 'gift' | 'wild'
+  legendary: boolean
+  savePoint: string
+  note: string
 }
 
 export interface Chapter {
