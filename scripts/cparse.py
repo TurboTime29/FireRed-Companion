@@ -17,6 +17,21 @@ def defines(rel):
         out[m.group(1)] = int(v, 0)
     return out
 
+def defines_eval(rel, seed=None):
+    """name -> int for #defines whose value is an integer expression over earlier defines (e.g. (SYS_FLAGS + 0x20))."""
+    env = dict(seed or {})
+    for m in re.finditer(r"^#define\s+([A-Z0-9_]+)\s+(.+?)\s*(?://.*)?$", read(rel), re.M):
+        name, expr = m.group(1), m.group(2)
+        expr = re.sub(r"/\*.*?\*/", "", expr).strip()
+        if not re.fullmatch(r"[A-Za-z0-9_\s+\-*()<>|]+", expr):
+            continue
+        try:
+            env[name] = int(eval(expr, {"__builtins__": {}}, env))
+        except Exception:
+            pass
+    return env
+
+
 def enum_values(rel, first_name):
     """Assign sequential ints to an enum starting at the line containing first_name (value 0 for the enum's first item)."""
     text = read(rel)

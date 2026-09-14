@@ -5,6 +5,7 @@ Badges: Boulder + Cascade. Money 12345. Dex: seen/caught bits for those species.
 Writes scripts/fixtures/test.sav
 """
 import os, struct, json
+BROCK = next(t["id"] for t in json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "public", "data", "trainers.json"), encoding="utf-8")) if t["key"] == "TRAINER_LEADER_BROCK")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "fixtures")
@@ -88,7 +89,8 @@ struct.pack_into("<I", sb1, 0x290, 12345 ^ SEC_KEY)
 struct.pack_into("<HH", sb1, 0x310, 13, 5 ^ (SEC_KEY & 0xFFFF))
 struct.pack_into("<HH", sb1, 0x464, 339, 1 ^ (SEC_KEY & 0xFFFF))
 # badges: flags 0x820, 0x821
-for f in (0x820, 0x821): sb1[0xEE0 + f // 8] |= 1 << (f % 8)
+# story flags: Viridian Forest Poke Ball (0x156), hidden Potion (1000), got HM01 (0x237), beaten Brock (trainer flag 0x500 + 414)
+for f in (0x820, 0x821, 0x156, 1000, 0x237, 0x500 + BROCK): sb1[0xEE0 + f // 8] |= 1 << (f % 8)
 
 # PC
 pc = bytearray(0x83D0)

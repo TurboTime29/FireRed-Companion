@@ -20,7 +20,7 @@ export interface Db {
   chapters: Chapter[]
   stepById: Map<string, { step: Chapter['steps'][number]; chapter: Chapter }>
   /** species id -> trainers that use it (for "who has X") */
-  meta: { commit: string; counts: Record<string, number>; speciesMap?: number[] }
+  meta: { commit: string; counts: Record<string, number>; speciesMap?: number[]; flags?: Record<string, number>; trainerFlagsStart?: number; flagsCount?: number }
 }
 
 let cached: Db | null = null

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { parseSave } from './gen3'
+import { inferStoryProgress, parseSave } from './gen3'
 import type { Db } from '../../data/db'
 
 const root = resolve(__dirname, '../../..')
@@ -56,5 +56,22 @@ describe.skipIf(!existsSync(fixture))('FireRed .sav import', () => {
   })
   it('guesses the starter', () => {
     expect(save.starter).toBe(4)
+  })
+  it('reads event flags and infers story progress', () => {
+    const meta = db.meta as { flags: Record<string, number> }
+    expect(save.flags.has(meta.flags.FLAG_HIDE_VIRIDIAN_FOREST_POKE_BALL)).toBe(true)
+    expect(save.flags.has(meta.flags.FLAG_GOT_HM01)).toBe(true)
+    const locations = load('locations'), trainers = load('trainers'), chapters = load('walkthrough'), items = load('items')
+    const full = { ...db, locations, trainers, chapters, itemById: new Map(items.map((i: { id: number }) => [i.id, i])) } as unknown as Db
+    const story = inferStoryProgress(save, full)
+    expect(story.flags).toContain('FLAG_HIDE_VIRIDIAN_FOREST_POKE_BALL')
+    expect(story.flags).toContain('FLAG_HIDDEN_ITEM_VIRIDIAN_FOREST_POTION')
+    const brock = trainers.find((t: { key: string }) => t.key === 'TRAINER_LEADER_BROCK')
+    expect(story.beaten).toContain(brock.id)
+    const brockStep = chapters.flatMap((c: { steps: { id: string; trainers?: number[] }[] }) => c.steps).find((s: { trainers?: number[] }) => s.trainers?.includes(brock.id))
+    expect(story.steps).toContain(brockStep.id)
+    const hm01Step = chapters.flatMap((c: { steps: { id: string; items?: number[]; kind: string }[] }) => c.steps).find((s: { items?: number[]; kind: string }) => s.kind === 'gift' && s.items?.includes(339))
+    expect(story.steps).toContain(hm01Step.id)
+    expect(story.currentChapter).toBe(5)
   })
 })

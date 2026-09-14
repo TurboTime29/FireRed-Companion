@@ -578,10 +578,19 @@ dump("locations.json", [locations[k] for k in sorted(locations)])
 dump("typechart.json", chart)
 dump("trades.json", trades)
 dump("gifts_raw.json", gifts)
+# event flags the app can read back from a .sav: item balls, hidden items, gifts, badges, story beats
+from cparse import defines_eval
+all_flags = defines_eval("include/constants/flags.h", seed=OPP)
+used = {b["flag"] for l in locations.values() for b in l["items"] + l["hiddenItems"]}
+flags_out = {k: v for k, v in all_flags.items() if k in used or k.startswith(("FLAG_GOT_", "FLAG_BADGE", "FLAG_BEAT_", "FLAG_DEFEATED_", "FLAG_SYS_", "FLAG_RESCUED_", "FLAG_OAK_", "FLAG_DELIVERED_"))}
+trainer_flags_start = all_flags.get("TRAINER_FLAGS_START", 0x500)
+print(f"  {len(flags_out)} event flags exported (trainer flags start at {hex(trainer_flags_start)})")
+
 species_map = [0] * (max(species_to_nat) + 1)
 for sid, nat in species_to_nat.items():
     species_map[sid] = nat if 1 <= nat <= 386 else 0
-dump("meta.json", {"source": "pret/pokefirered", "commit": commit, "speciesMap": species_map,
+dump("meta.json", {"source": "pret/pokefirered", "commit": commit, "speciesMap": species_map, "flags": flags_out, "trainerFlagsStart": trainer_flags_start,
+                   "flagsCount": all_flags.get("FLAGS_COUNT", 0x900),
                    "counts": {"pokemon": len(pokemon), "moves": len(moves), "items": len(items), "trainers": len(trainers), "maps": len(locations),
                               "itemBalls": n_balls, "hiddenItems": n_hidden}})
 print("DONE")

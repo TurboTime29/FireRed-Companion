@@ -16,6 +16,8 @@ export interface ParsedSave {
   keyItems: number[]
   bag: { item: number; qty: number }[]
   starter: 1 | 4 | 7 | null
+  /** numeric ids of every set event flag (item balls, hidden items, gifts, beaten trainers) */
+  flags: Set<number>
 }
 
 const SECTOR = 0x1000
@@ -170,7 +172,11 @@ export function parseSave(file: Uint8Array, db: Db): ParsedSave {
   for (let i = 0; i < partyCount; i++) { const m = decodeMon(db, sb1.subarray(0x38 + i * 100, 0x38 + (i + 1) * 100), true, trainerId, secretId, true); if (m) mons.push(m) }
   const money = (s1.u32(0x290) ^ secKey) >>> 0
   const badges: boolean[] = []
-  for (let i = 0; i < 8; i++) badges.push(!!bit(sb1.subarray(0xee0), 0x820 + i))
+  const flagBytes = sb1.subarray(0xee0)
+  for (let i = 0; i < 8; i++) badges.push(!!bit(flagBytes, 0x820 + i))
+  const flags = new Set<number>()
+  const flagsCount = db.meta.flagsCount ?? 0x900
+  for (let f = 0; f < flagsCount; f++) if (bit(flagBytes, f)) flags.add(f)
   const bag: { item: number; qty: number }[] = []
   const keyItems: number[] = []
   const pockets: [number, number][] = [[0x310, 42], [0x3b8, 30], [0x430, 13], [0x464, 58], [0x54c, 43]]
@@ -190,5 +196,53 @@ export function parseSave(file: Uint8Array, db: Db): ParsedSave {
   const line = (s: number) => [s, s + 1, s + 2]
   let starter: ParsedSave['starter'] = null
   for (const s of [1, 4, 7] as const) if (mons.some((m) => line(s).includes(m.species))) { starter = s; break }
-  return { playerName, trainerId, secretId, playTime, money, badges, seen, caught, mons, keyItems, bag, starter }
+  return { playerName, trainerId, secretId, playTime, money, badges, seen, caught, mons, keyItems, bag, starter, flags }
+}
+
+export interface StoryProgress {
+  /** app flag names (item balls / hidden items) that the save has collected */
+  flags: string[]
+  /** trainer ids the save has beaten */
+  beaten: number[]
+  /** walkthrough step ids inferred as done */
+  steps: string[]
+  currentChapter: number
+}
+
+/** Map raw save flags onto the app's progress model: collected items, beaten trainers, and walkthrough steps. */
+export function inferStoryProgress(save: ParsedSave, db: Db): StoryProgress {
+  const names = db.meta.flags ?? {}
+  const has = (name: string) => { const id = names[name]; return id !== undefined && save.flags.has(id) }
+  const flags: string[] = []
+  for (const l of db.locations) for (const b of [...l.items, ...l.hiddenItems]) if (b.flag && has(b.flag)) flags.push(b.flag)
+  const start = db.meta.trainerFlagsStart ?? 0x500
+  const beaten = db.trainers.filter((t) => save.flags.has(start + t.id)).map((t) => t.id)
+  const beatenSet = new Set(beaten)
+  const gotFlagNames = Object.keys(names).filter((n) => n.startsWith('FLAG_GOT_'))
+  const gotItem = (itemId: number) => {
+    const key = db.itemById.get(itemId)?.key.replace('ITEM_', '')
+    if (!key) return false
+    return gotFlagNames.some((n) => new RegExp(`FLAG_GOT_${key}(_|$)`).test(n) && has(n))
+  }
+  const steps: string[] = []
+  let lastDoneChapter = 0
+  for (const c of db.chapters) {
+    const doneIdx: number[] = []
+    c.steps.forEach((s, i) => {
+      let done = false
+      if (s.flag && has(s.flag)) done = true
+      else if (s.trainers?.length && s.trainers.every((t) => beatenSet.has(t))) done = true
+      else if (s.battleGroup && db.trainers.some((t) => t.battleGroup === s.battleGroup && beatenSet.has(t.id))) done = true
+      else if (s.badge && save.badges[s.badge - 1]) done = true
+      else if (s.kind === 'gift' && s.items?.some(gotItem)) done = true
+      if (done) doneIdx.push(i)
+    })
+    if (doneIdx.length) lastDoneChapter = c.n
+    // everything up to the last verifiable step in this chapter counts as done
+    const upto = doneIdx.length ? Math.max(...doneIdx) : -1
+    c.steps.forEach((s, i) => { if (i <= upto && s.kind !== 'tip') steps.push(s.id) })
+  }
+  // chapters before the furthest one with confirmed progress are complete
+  for (const c of db.chapters) if (c.n < lastDoneChapter) for (const s of c.steps) if (s.kind !== 'tip' && !steps.includes(s.id)) steps.push(s.id)
+  return { flags, beaten, steps, currentChapter: Math.max(1, lastDoneChapter) }
 }

@@ -3,7 +3,7 @@ import { getDb } from '../data/db'
 import { exportProgress, useProgress, type ProgressDoc } from '../store/progress'
 import { useSettings } from '../store/settings'
 import { signIn, signOut, syncEnabled, useSession, useSyncStatus } from '../lib/sync'
-import { parseSave, type ParsedSave } from '../lib/save/gen3'
+import { inferStoryProgress, parseSave, type ParsedSave } from '../lib/save/gen3'
 import { PageTitle, Section, Sprite } from '../components/ui'
 
 export default function SettingsPage() {
@@ -27,14 +27,20 @@ export default function SettingsPage() {
   const doSave = async (f: File) => {
     try { setParsed(parseSave(new Uint8Array(await f.arrayBuffer()), db)); setMsg('') } catch (e) { setMsg('Could not read save: ' + (e as Error).message); setParsed(null) }
   }
+  const story = parsed ? inferStoryProgress(parsed, db) : null
   const applySave = () => {
-    if (!parsed) return
+    if (!parsed || !story) return
     const keepBoxes = prog.mons.filter((m) => m.note === 'manual')
+    const now = Date.now()
+    const flags = { ...prog.flags }; for (const f of story.flags) flags[f] = flags[f] ?? now
+    const beaten = { ...prog.beaten }; for (const t of story.beaten) beaten[t] = beaten[t] ?? now
+    const steps = { ...prog.steps }; for (const s of story.steps) steps[s] = steps[s] ?? now
     prog.replaceAll({
       ...exportProgress(prog), playerName: parsed.playerName, badges: parsed.badges, money: parsed.money, seen: parsed.seen, caught: parsed.caught,
-      mons: [...parsed.mons, ...keepBoxes], starter: parsed.starter ?? prog.starter, keyItems: parsed.keyItems, updatedAt: Date.now(),
+      mons: [...parsed.mons, ...keepBoxes], starter: parsed.starter ?? prog.starter, keyItems: parsed.keyItems, flags, beaten, steps,
+      currentChapter: Math.max(prog.currentChapter, story.currentChapter), updatedAt: now,
     })
-    setParsed(null); setMsg('Save applied to the tracker.')
+    setParsed(null); setMsg('Save applied: party, boxes, badges, Dex, items, beaten trainers and walkthrough steps updated.')
   }
 
   return (
@@ -60,6 +66,7 @@ export default function SettingsPage() {
             <div><b>{parsed.playerName}</b> · ID {parsed.trainerId} · ${parsed.money} · {parsed.playTime} · {parsed.badges.filter(Boolean).length} badges · Dex {parsed.caught.length} caught / {parsed.seen.length} seen</div>
             <div className="mt-1 flex flex-wrap gap-2">{parsed.mons.filter((m) => m.inParty).map((m, i) => <span key={i} className="inline-flex items-center gap-1"><Sprite id={m.species} size={28} />{m.nickname || db.pokemonById.get(m.species)?.name} Lv.{m.level}</span>)}</div>
             <div className="text-xs text-stone-500">{parsed.mons.filter((m) => !m.inParty).length} in PC boxes</div>
+            {story && <div className="text-xs text-stone-500">Story: chapter {story.currentChapter} · {story.beaten.length} trainers beaten · {story.flags.length} items collected · {story.steps.length} guide steps will be ticked</div>}
             <div className="mt-2 flex gap-2"><button className="btn-primary" onClick={applySave}>Apply to tracker</button><button className="btn-ghost" onClick={() => setParsed(null)}>Cancel</button></div>
           </div>
         )}
