@@ -7,7 +7,7 @@ const rawUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim()
 const url = rawUrl ? (() => { try { return new URL(rawUrl).origin } catch { return undefined } })() : undefined
 const key = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim()
 
-export const supabase: SupabaseClient | null = url && key ? createClient(url, key) : null
+export const supabase: SupabaseClient | null = url && key ? createClient(url, key, { auth: { experimental: { passkey: true } } }) : null
 export const syncEnabled = !!supabase
 
 type Status = 'disabled' | 'signed-out' | 'syncing' | 'synced' | 'error'
@@ -26,6 +26,36 @@ export function useSyncStatus() {
 export async function signIn(email: string) {
   if (!supabase) throw new Error('sync disabled')
   const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + window.location.pathname } })
+  if (error) throw error
+}
+
+/** True when this browser can do WebAuthn (Face ID / Touch ID / Windows Hello / security key). */
+export const passkeySupported = typeof window !== 'undefined' && 'PublicKeyCredential' in window && !!navigator.credentials
+
+/** Face ID / Touch ID sign-in with a passkey registered earlier for this account. */
+export async function signInWithPasskey() {
+  if (!supabase) throw new Error('sync disabled')
+  const { error } = await supabase.auth.signInWithPasskey()
+  if (error) throw error
+}
+
+/** Adds a passkey for the signed-in user on this device (synced by iCloud Keychain / Google Password Manager). */
+export async function registerPasskey() {
+  if (!supabase) throw new Error('sync disabled')
+  const { error } = await supabase.auth.registerPasskey()
+  if (error) throw error
+}
+
+export interface PasskeyInfo { id: string; name?: string; createdAt: string; lastUsedAt?: string }
+export async function listPasskeys(): Promise<PasskeyInfo[]> {
+  if (!supabase) return []
+  const { data, error } = await supabase.auth.passkey.list()
+  if (error) throw error
+  return (data ?? []).map((k) => ({ id: k.id, name: k.friendly_name, createdAt: k.created_at, lastUsedAt: k.last_used_at }))
+}
+export async function deletePasskey(passkeyId: string) {
+  if (!supabase) throw new Error('sync disabled')
+  const { error } = await supabase.auth.passkey.delete({ passkeyId })
   if (error) throw error
 }
 

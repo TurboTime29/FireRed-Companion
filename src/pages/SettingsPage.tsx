@@ -1,10 +1,43 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getDb } from '../data/db'
 import { exportProgress, useProgress, type ProgressDoc } from '../store/progress'
 import { useSettings } from '../store/settings'
-import { clearCloud, signIn, signOut, syncEnabled, useSession, useSyncStatus, verifyCode } from '../lib/sync'
+import { clearCloud, deletePasskey, listPasskeys, passkeySupported, registerPasskey, signIn, signInWithPasskey, signOut, syncEnabled, useSession, useSyncStatus, verifyCode, type PasskeyInfo } from '../lib/sync'
 import { inferStoryProgress, parseSave, type ParsedSave } from '../lib/save/gen3'
 import { PageTitle, Section, Sprite } from '../components/ui'
+
+function PasskeyManager() {
+  const [keys, setKeys] = useState<PasskeyInfo[] | null>(null)
+  const [msg, setMsg] = useState('')
+  const [busy, setBusy] = useState(false)
+  const refresh = () => listPasskeys().then(setKeys).catch((e) => setMsg((e as Error).message))
+  useEffect(() => { void refresh() }, [])
+  const add = async () => {
+    setBusy(true); setMsg('')
+    try { await registerPasskey(); setMsg('Passkey added. Next time, tap "Sign in with passkey".'); await refresh() } catch (e) { setMsg('Could not add passkey: ' + (e as Error).message) } finally { setBusy(false) }
+  }
+  const remove = async (k: PasskeyInfo) => {
+    if (!confirm('Remove this passkey? You can still sign in with an email code.')) return
+    try { await deletePasskey(k.id); await refresh() } catch (e) { setMsg((e as Error).message) }
+  }
+  return (
+    <div className="mt-3 rounded-xl bg-stone-50 p-2.5 text-sm dark:bg-stone-800/60">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="font-medium">🔐 Passkeys</span>
+        <span className="text-xs text-stone-500">Face ID / Touch ID / Windows Hello sign-in, no email needed</span>
+        {passkeySupported && <button className="btn-primary ml-auto text-xs" onClick={() => void add()} disabled={busy}>{busy ? 'Waiting for device…' : '+ Add passkey on this device'}</button>}
+      </div>
+      {!passkeySupported && <p className="mt-1 text-xs text-stone-500">This browser does not support passkeys.</p>}
+      {keys && keys.length > 0 && (
+        <ul className="mt-2 divide-y divide-stone-200 dark:divide-stone-700">
+          {keys.map((k) => <li key={k.id} className="flex items-center gap-2 py-1 text-xs"><span className="flex-1">{k.name || 'Passkey'} · added {new Date(k.createdAt).toLocaleDateString()}{k.lastUsedAt ? ` · last used ${new Date(k.lastUsedAt).toLocaleDateString()}` : ''}</span><button className="link" onClick={() => void remove(k)}>remove</button></li>)}
+        </ul>
+      )}
+      {keys && keys.length === 0 && <p className="mt-1 text-xs text-stone-500">No passkeys yet. Add one here on each device you use (Apple devices share them through iCloud Keychain).</p>}
+      {msg && <p className="mt-1 text-xs text-stone-600 dark:text-stone-300">{msg}</p>}
+    </div>
+  )
+}
 
 export default function SettingsPage() {
   const db = getDb()
@@ -20,6 +53,10 @@ export default function SettingsPage() {
   const sendCode = async () => {
     setBusy(true)
     try { await signIn(email); try { localStorage.setItem('firered-pending-email', email) } catch { /* private mode */ } setSent(true); setMsg('') } catch (err) { setMsg((err as Error).message) } finally { setBusy(false) }
+  }
+  const passkeyLogin = async () => {
+    setBusy(true); setMsg('')
+    try { await signInWithPasskey(); setMsg('Signed in.') } catch (err) { setMsg('Passkey sign-in failed: ' + (err as Error).message + '. Use the email code below, then add a passkey in this section.') } finally { setBusy(false) }
   }
   const verify = async () => {
     setBusy(true)
@@ -59,6 +96,12 @@ export default function SettingsPage() {
       <PageTitle>Settings</PageTitle>
       <Section title="Cloud sync">
         {!syncEnabled && <p className="text-sm text-stone-500">Sync is not configured for this build (no Supabase keys). Progress stays in this browser; use export/import to move it.</p>}
+        {syncEnabled && !session && !sent && passkeySupported && (
+          <div className="mb-3">
+            <button className="btn-primary w-full py-2.5 text-base" onClick={() => void passkeyLogin()} disabled={busy}>🔐 {busy ? 'Waiting for device…' : 'Sign in with passkey'}</button>
+            <p className="mt-1 text-center text-xs text-stone-500">Face ID, Touch ID or Windows Hello. First time on this account? Use the email code below, then add a passkey.</p>
+          </div>
+        )}
         {syncEnabled && !session && !sent && (
           <form onSubmit={(e) => { e.preventDefault(); void sendCode() }} className="flex gap-2">
             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="input" autoComplete="email" />
@@ -76,6 +119,7 @@ export default function SettingsPage() {
           </form>
         )}
         {syncEnabled && session && <div className="flex items-center gap-2 text-sm"><span>Signed in as {session.user.email}</span><span className={`chip ${sync.status === 'synced' ? 'bg-emerald-600 text-white' : sync.status === 'error' ? 'bg-red-600 text-white' : 'bg-stone-300'}`}>{sync.status}</span>{sync.msg && <span className="text-xs text-red-600">{sync.msg}</span>}<button className="btn-ghost ml-auto text-xs" onClick={() => signOut()}>Sign out</button></div>}
+        {syncEnabled && session && <PasskeyManager />}
         <p className="mt-1 text-xs text-stone-500">Progress is saved in this browser instantly and pushed to the cloud a couple of seconds after every change. Devices are merged, so anything ticked or caught on one device is kept everywhere; a new device never overwrites the cloud.</p>
       </Section>
 

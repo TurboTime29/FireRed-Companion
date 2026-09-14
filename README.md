@@ -35,6 +35,10 @@ The app signs in with an email code so it also works as an iOS/Android home-scre
 
 3. Optional hardening under **Authentication → Providers → Email**: set *Email OTP Length* to 8–10 digits and *Email OTP Expiration* to 600 seconds. Supabase also rate-limits attempts, so a code cannot be brute-forced.
 
+## Passkeys (Face ID / Touch ID / Windows Hello)
+
+After the first email-code sign-in, Settings → Cloud sync offers **Add passkey on this device**; later sign-ins use **Sign in with passkey** and never leave the app. Supabase side: **Authentication → Passkeys**: enable, Relying Party ID `turbotime29.github.io`, Origins `https://turbotime29.github.io` (add `http://localhost:5173` for local dev). The client enables `auth.experimental.passkey`, which Supabase still labels experimental.
+
 ## Deploy
 
 Push to `main`; the GitHub Actions workflow builds and publishes to GitHub Pages. Set repository secrets `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to enable cloud sync (schema in `supabase/schema.sql`).
