@@ -7,6 +7,11 @@ import { matchup, readiness, toCombatant, trainerDisplayName, trainersForGroup, 
 import { MatchupTable } from '../components/MatchupTable'
 import { Empty, PageTitle, PokemonLink, Section, Sprite, TypeBadge, EffChip } from '../components/ui'
 
+const GROUP_LABEL: Record<string, string> = {
+  'rival-oaks-lab': 'Rival 1 (Lab)', 'rival-route22-early': 'Rival 2 (Route 22)', 'rival-cerulean': 'Rival 3 (Cerulean)', 'rival-ss-anne': 'Rival 4 (S.S. Anne)',
+  'rival-pokemon-tower': 'Rival 5 (Tower)', 'rival-silph': 'Rival 6 (Silph)', 'rival-route22-late': 'Rival 7 (Route 22)', 'champion-first': 'Champion', 'champion-rematch': 'Champion rematch',
+}
+
 export default function BattlePage() {
   const db = getDb()
   const [params, setParams] = useSearchParams()
@@ -47,7 +52,7 @@ export default function BattlePage() {
         )}
       </div>
       <div className="mb-3 flex flex-wrap gap-1">
-        {quick.map((t) => <button key={t.id} onClick={() => setParams({ t: String(t.id) })} className={`chip ${trainer?.id === t.id ? 'bg-red-700 text-white' : 'bg-stone-200 dark:bg-stone-800'}`}>{t.classKey === 'LEADER' ? `Next gym: ${t.name}` : trainerDisplayName(t)}</button>)}
+        {quick.map((t) => <button key={t.id} onClick={() => setParams({ t: String(t.id) })} className={`chip ${trainer?.id === t.id ? 'bg-red-700 text-white' : 'bg-stone-200 dark:bg-stone-800'}`}>{t.classKey === 'LEADER' ? `Next gym: ${t.name}` : GROUP_LABEL[t.battleGroup ?? ''] ?? trainerDisplayName(t)}</button>)}
       </div>
       {!party.length && <p className="mb-3 rounded bg-amber-100 p-2 text-sm text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">Your party is empty. <Link className="link" to="/team">Add your Pokémon</Link> to get recommendations.</p>}
 

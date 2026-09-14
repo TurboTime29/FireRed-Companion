@@ -57,20 +57,26 @@ function MonEditor({ mon, onSave, onCancel }: { mon: Partial<OwnedMon>; onSave: 
   const [nature, setNature] = useState(mon.nature ?? '')
   const [ability, setAbility] = useState<number | undefined>(mon.ability)
   const [inParty, setInParty] = useState(mon.inParty ?? true)
+  const [autoMoves, setAutoMoves] = useState(!mon.species)
   const p = species ? db.pokemonById.get(species) : null
+  const changeLevel = (v: number) => {
+    setLevel(v)
+    if (autoMoves && p) setMoves([...defaultMoves(p, v), undefined, undefined, undefined, undefined].slice(0, 4))
+  }
   const holdables = useMemo(() => db.items.filter((i) => !i.keyItem && i.pocket !== 'tm case' && i.pocket !== 'poke balls').sort((a, b) => a.name.localeCompare(b.name)), [db])
   return (
     <div className="card space-y-2 p-3">
-      <PokemonPicker value={species} onChange={(id) => { setSpecies(id); const pp = db.pokemonById.get(id)!; if (!mon.species || mon.species !== id) setMoves([...defaultMoves(pp, level), undefined, undefined, undefined, undefined].slice(0, 4)) }} />
+      <PokemonPicker value={species} onChange={(id) => { setSpecies(id); const pp = db.pokemonById.get(id)!; if (!mon.species || mon.species !== id) { setMoves([...defaultMoves(pp, level), undefined, undefined, undefined, undefined].slice(0, 4)); setAutoMoves(true) } }} />
       {p && (
         <>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <label className="text-xs">Level<input type="number" min={1} max={100} value={level} onChange={(e) => setLevel(Math.max(1, Math.min(100, Number(e.target.value) || 1)))} className="input" /></label>
+            <label className="text-xs">Level<input type="number" min={1} max={100} value={level} onChange={(e) => changeLevel(Math.max(1, Math.min(100, Number(e.target.value) || 1)))} className="input" /></label>
             <label className="text-xs">Nickname<input value={nick} onChange={(e) => setNick(e.target.value)} className="input" placeholder={p.name} /></label>
             <label className="text-xs">Nature<select value={nature} onChange={(e) => setNature(e.target.value)} className="input"><option value="">unknown</option>{Object.keys(NATURES).map((n) => <option key={n}>{n}</option>)}</select></label>
             <label className="text-xs">Ability<select value={ability ?? ''} onChange={(e) => setAbility(e.target.value ? Number(e.target.value) : undefined)} className="input"><option value="">unknown</option>{p.abilities.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}</select></label>
           </div>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">{moves.map((m, i) => <MoveSelect key={i} p={p} level={level} value={m} onChange={(v) => setMoves(moves.map((x, j) => (j === i ? v : x)))} />)}</div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">{moves.map((m, i) => <MoveSelect key={i} p={p} level={level} value={m} onChange={(v) => { setAutoMoves(false); setMoves(moves.map((x, j) => (j === i ? v : x))) }} />)}</div>
+          {autoMoves && <p className="text-xs text-stone-500">Moves filled from the level-up list; edit any of them if yours differ.</p>}
           <div className="flex flex-wrap items-center gap-2">
             <label className="flex-1 text-xs">Held item<select value={item ?? ''} onChange={(e) => setItem(e.target.value ? Number(e.target.value) : undefined)} className="input"><option value="">none</option>{holdables.map((i) => <option key={i.id} value={i.id}>{i.name}</option>)}</select></label>
             <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={inParty} onChange={(e) => setInParty(e.target.checked)} className="accent-red-700" /> In party</label>
