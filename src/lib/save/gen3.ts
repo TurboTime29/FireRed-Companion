@@ -234,6 +234,11 @@ export function inferStoryProgress(save: ParsedSave, db: Db): StoryProgress {
     if (!key) return false
     return gotFlagNames.some((n) => new RegExp(`FLAG_GOT_${key}(_|$)`).test(n) && has(n))
   }
+  const gotPokemon = (dex: number) => {
+    const key = db.pokemonById.get(dex)?.key.replace('SPECIES_', '')
+    if (!key) return false
+    return gotFlagNames.some((n) => new RegExp(`FLAG_GOT_${key}(_|$)`).test(n) && has(n))
+  }
   const steps: string[] = []
   let lastDoneChapter = 0
   for (const c of db.chapters) {
@@ -251,6 +256,7 @@ export function inferStoryProgress(save: ParsedSave, db: Db): StoryProgress {
       else if (s.battleGroup && db.trainers.some((t) => t.battleGroup === s.battleGroup && beatenSet.has(t.id))) done = true
       else if (s.badge && save.badges[s.badge - 1]) done = true
       else if (s.kind === 'gift' && s.items?.some(gotItem)) done = true
+      else if (s.kind === 'gift' && s.pokemon?.some(gotPokemon)) done = true
       if (done) { verified.push(s.id); if (!isHidden) strongIdx.push(i) }
     })
     if (strongIdx.length) lastDoneChapter = c.n
