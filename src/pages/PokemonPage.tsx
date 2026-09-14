@@ -5,6 +5,7 @@ import type { Pokemon } from '../data/types'
 import { useProgress } from '../store/progress'
 import { typeMatchupSummary } from '../lib/selectors'
 import { calcStats } from '../lib/battle'
+import { useShinySpecies } from '../lib/shiny'
 import { EffChip, ItemLink, LocationLink, MoveTable, PageTitle, PokemonLink, Section, Sprite, StatBar, TypeBadge, Empty } from '../components/ui'
 
 const METHOD: Record<string, string> = { grass: 'Grass', surf: 'Surfing', 'rock-smash': 'Rock Smash', 'old-rod': 'Old Rod', 'good-rod': 'Good Rod', 'super-rod': 'Super Rod', gift: 'Gift', egg: 'Egg', static: 'One-time encounter' }
@@ -46,7 +47,12 @@ export default function PokemonPage() {
   const seen = useProgress((s) => s.seen.includes(id))
   const markCaught = useProgress((s) => s.markCaught)
   const markSeen = useProgress((s) => s.markSeen)
+  const mons = useProgress((s) => s.mons)
+  const shinySet = useShinySpecies()
   if (!p) return <Empty>Unknown Pokémon.</Empty>
+  const owned = mons.filter((m) => m.species === id)
+  const shinyOwned = owned.filter((m) => m.shiny)
+  const isShiny = shinySet.has(id)
   const m = typeMatchupSummary(db, p.types)
   const stages = evoChain(p)
   const total = Object.values(p.stats).reduce((a, b) => a + b, 0)
@@ -59,8 +65,8 @@ export default function PokemonPage() {
       <div className="mb-2 flex justify-between text-sm">{prev ? <Link className="link" to={`/dex/${prev.id}`}>← #{prev.id} {prev.name}</Link> : <span />}{next ? <Link className="link" to={`/dex/${next.id}`}>#{next.id} {next.name} →</Link> : <span />}</div>
       <div className="card mb-3 flex flex-col gap-3 p-3 sm:flex-row">
         <div className="flex items-center justify-center gap-2 sm:w-48">
-          <img src={spriteUrl.artwork(id)} alt={p.name} className="h-40 w-40 object-contain" loading="lazy" />
-          <div className="flex flex-col"><Sprite id={id} size={56} /><Sprite id={id} size={56} back /></div>
+          {isShiny ? <Sprite id={id} size={160} className="h-40 w-40" /> : <img src={spriteUrl.artwork(id)} alt={p.name} className="h-40 w-40 object-contain" loading="lazy" />}
+          <div className="flex flex-col"><Sprite id={id} size={56} shiny={false} /><Sprite id={id} size={56} back /></div>
         </div>
         <div className="flex-1">
           <PageTitle sub={<>#{String(id).padStart(3, '0')} · {p.category} Pokémon · {p.height} m · {p.weight} kg</>} right={
@@ -69,6 +75,13 @@ export default function PokemonPage() {
               <button onClick={() => markCaught(id)} className={`btn ${caught ? 'bg-emerald-600 text-white' : 'btn-ghost'}`}>{caught ? '✓ Caught' : 'Caught'}</button>
             </div>}>{p.name}</PageTitle>
           <div className="mb-2 flex gap-1">{p.types.map((t) => <TypeBadge key={t} type={t} />)}</div>
+          {shinyOwned.length > 0 && (
+            <div className="mb-2 rounded-lg border border-amber-400 bg-amber-50 px-2 py-1 text-sm text-amber-900 dark:border-amber-600 dark:bg-amber-950/40 dark:text-amber-100">
+              ✨ You own a <b>shiny {p.name}</b>{shinyOwned.map((m) => ` · ${m.nickname ? `${m.nickname} ` : ''}Lv.${m.level} (${m.inParty ? 'party' : 'PC'})`).join('')}
+            </div>
+          )}
+          {shinyOwned.length === 0 && isShiny && <div className="mb-2 text-xs text-amber-700 dark:text-amber-400">✨ Shown shiny because you own its shiny evolution.</div>}
+          {owned.length > 0 && shinyOwned.length === 0 && <div className="mb-2 text-xs text-stone-500">You own: {owned.map((m) => `${m.nickname ? `${m.nickname} ` : ''}Lv.${m.level} (${m.inParty ? 'party' : 'PC'})`).join(', ')}</div>}
           <p className="text-sm text-stone-600 dark:text-stone-300">{p.dexText}</p>
           <div className="mt-2 text-sm">
             <b>Abilit{p.abilities.length > 1 ? 'ies' : 'y'}:</b> {p.abilities.map((a) => <span key={a.id} className="mr-2" title={a.text}>{a.name} <span className="text-stone-500">({a.text})</span></span>)}
