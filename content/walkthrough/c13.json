@@ -11,7 +11,7 @@
     {"kind": "gift", "text": "Ember Spa: the old man inside gives HM06 Rock Smash. It also heals your party.", "map": "MAP_ONE_ISLAND_KINDLE_ROAD_EMBER_SPA", "items": ["ITEM_HM06"], "hm": 6},
     {"kind": "story", "text": "Mt. Ember exterior: Rock Smash and Strength open the way up. Explosion tutor here (once). Two Rocket Grunts guard the Ruby path but it is closed until after the Elite Four.", "map": "MAP_MT_EMBER_EXTERIOR"},
     {"auto": "map", "map": "MAP_MT_EMBER_EXTERIOR"},
-    {"kind": "missable", "text": "Mt. Ember summit: Moltres Lv.50 (Fire/Flying, weak to Rock ×4). One-time; save, then Rock Slide/Surf and Ultra Balls.", "map": "MAP_MT_EMBER_SUMMIT", "pokemon": ["Moltres"]},
+    {"kind": "missable", "text": "Mt. Ember summit: Moltres Lv.50 (Fire/Flying, weak to Rock ×4). One-time; save, then Rock Slide/Surf and Ultra Balls.", "map": "MAP_MT_EMBER_SUMMIT", "pokemon": ["Moltres"], "flag": "FLAG_FOUGHT_MOLTRES"},
     {"kind": "story", "text": "Two Island: the Game Corner owner is too worried to take the Meteorite; his daughter Lostelle is missing on Three Island. The market stall sells rare items as you progress.", "map": "MAP_TWO_ISLAND"},
     {"auto": "items", "map": "MAP_TWO_ISLAND"},
     {"kind": "story", "text": "Cape Brink (north of Two Island): hidden items; the house has a tutor who teaches Frenzy Plant / Blast Burn / Hydro Cannon to a fully evolved starter with max friendship (post-game).", "map": "MAP_TWO_ISLAND_CAPE_BRINK"},
@@ -26,6 +26,6 @@
     {"kind": "missable", "text": "A Hypno Lv.30 attacks Lostelle; one-time encounter (catchable). Then she gives an Iapapa Berry and goes home.", "map": "MAP_THREE_ISLAND_BERRY_FOREST", "pokemon": ["Hypno"], "items": ["ITEM_IAPAPA_BERRY"]},
     {"auto": "map", "map": "MAP_THREE_ISLAND_BERRY_FOREST"},
     {"kind": "gift", "text": "Back on Two Island: Lostelle's father takes the Meteorite and gives a Moon Stone.", "map": "MAP_TWO_ISLAND", "items": ["ITEM_MOON_STONE"]},
-    {"kind": "story", "text": "Return to Celio on One Island, then take the ferry back to Vermilion (or Cinnabar) to continue the Kanto story.", "map": "MAP_ONE_ISLAND", "flag": "FLAG_FOUGHT_MOLTRES"}
+    {"kind": "story", "text": "Return to Celio on One Island, then take the ferry back to Vermilion (or Cinnabar) to continue the Kanto story.", "map": "MAP_ONE_ISLAND"}
   ]
 }

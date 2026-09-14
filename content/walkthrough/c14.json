@@ -8,10 +8,10 @@
     {"auto": "map", "map": "MAP_ROUTE21_NORTH"},
     {"kind": "story", "text": "Power Plant: Fly to Route 10 (Rock Tunnel Center), Surf down the river south of the tunnel entrance. Electabuzz, Magnemite, Voltorb inside; two of the item balls are Electrode (Lv.34) in disguise.", "map": "MAP_POWER_PLANT", "pokemon": ["Electabuzz", "Electrode"]},
     {"auto": "map", "map": "MAP_POWER_PLANT"},
-    {"kind": "missable", "text": "Zapdos Lv.50 at the back of the Power Plant (Electric/Flying, weak to Rock and Ice). One-time; save first.", "map": "MAP_POWER_PLANT", "pokemon": ["Zapdos"]},
+    {"kind": "missable", "text": "Zapdos Lv.50 at the back of the Power Plant (Electric/Flying, weak to Rock and Ice). One-time; save first.", "map": "MAP_POWER_PLANT", "pokemon": ["Zapdos"], "flag": "FLAG_FOUGHT_ZAPDOS"},
     {"kind": "tip", "text": "Viridian Gym is open once you have 7 badges. Giovanni: Rhyhorn Lv.45, Dugtrio Lv.42, Nidoqueen Lv.44, Nidoking Lv.45, Rhyhorn Lv.50. Water and Grass (Surf, Ice Beam, Giga Drain); Lapras and Blastoise sweep. Dugtrio is fast — Surf it."},
     {"auto": "trainers", "map": "MAP_VIRIDIAN_CITY_GYM", "exclude": ["TRAINER_LEADER_GIOVANNI"]},
     {"auto": "hidden", "map": "MAP_VIRIDIAN_CITY_GYM"},
-    {"kind": "boss", "text": "Gym Leader Giovanni. Earth Badge (all Pokémon obey) and TM26 Earthquake.", "map": "MAP_VIRIDIAN_CITY_GYM", "trainers": ["TRAINER_LEADER_GIOVANNI"], "badge": 8, "items": ["ITEM_TM26"], "flag": "FLAG_FOUGHT_ZAPDOS"}
+    {"kind": "boss", "text": "Gym Leader Giovanni. Earth Badge (all Pokémon obey) and TM26 Earthquake.", "map": "MAP_VIRIDIAN_CITY_GYM", "trainers": ["TRAINER_LEADER_GIOVANNI"], "badge": 8, "items": ["ITEM_TM26"]}
   ]
 }

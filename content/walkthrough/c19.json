@@ -7,13 +7,13 @@
     {"kind": "story", "text": "1F: weave through the rock maze to the ladders; items scattered on the ledges.", "map": "MAP_CERULEAN_CAVE_1F"},
     {"auto": "map", "map": "MAP_CERULEAN_CAVE_1F"},
     {"auto": "map", "map": "MAP_CERULEAN_CAVE_2F"},
-    {"kind": "missable", "text": "B1F: Mewtwo Lv.70 (Psychic, Recover, Swift, Safeguard). Save. Use the Master Ball, or paralyze it and throw Ultra Balls after lowering its HP with Bug/Ghost/Dark moves.", "map": "MAP_CERULEAN_CAVE_B1F", "pokemon": ["Mewtwo"]},
+    {"kind": "missable", "text": "B1F: Mewtwo Lv.70 (Psychic, Recover, Swift, Safeguard). Save. Use the Master Ball, or paralyze it and throw Ultra Balls after lowering its HP with Bug/Ghost/Dark moves.", "map": "MAP_CERULEAN_CAVE_B1F", "pokemon": ["Mewtwo"], "flag": "FLAG_FOUGHT_MEWTWO"},
     {"auto": "map", "map": "MAP_CERULEAN_CAVE_B1F"},
     {"kind": "tip", "text": "Once the Sevii quest is done the Elite Four use much stronger teams (Lv.63-75) with Johto/Hoenn Pokémon. Aim for Lv.70+."},
     {"kind": "boss", "text": "Lorelei round 2: Dewgong Lv.64, Cloyster Lv.63, Piloswine Lv.63, Jynx Lv.66, Lapras Lv.66.", "map": "MAP_POKEMON_LEAGUE_LORELEIS_ROOM", "trainers": ["TRAINER_ELITE_FOUR_LORELEI_2"]},
     {"kind": "boss", "text": "Bruno round 2: Steelix Lv.65 ×2 (Fire/Water/Ground/Fighting), Hitmonchan Lv.65, Hitmonlee Lv.65, Machamp Lv.68.", "map": "MAP_POKEMON_LEAGUE_BRUNOS_ROOM", "trainers": ["TRAINER_ELITE_FOUR_BRUNO_2"]},
     {"kind": "boss", "text": "Agatha round 2: Gengar Lv.66 and Lv.70, Crobat Lv.66, Misdreavus Lv.65, Arbok Lv.68.", "map": "MAP_POKEMON_LEAGUE_AGATHAS_ROOM", "trainers": ["TRAINER_ELITE_FOUR_AGATHA_2"]},
     {"kind": "boss", "text": "Lance round 2: Gyarados Lv.68, Dragonite Lv.66 and Lv.72, Kingdra Lv.66 (only Dragon hurts it much), Aerodactyl Lv.70.", "map": "MAP_POKEMON_LEAGUE_LANCES_ROOM", "trainers": ["TRAINER_ELITE_FOUR_LANCE_2"]},
-    {"kind": "boss", "text": "Champion rematch: Heracross Lv.72, Alakazam Lv.73, Tyranitar Lv.72, two of Arcanine/Gyarados/Exeggutor Lv.73, starter Lv.75.", "map": "MAP_POKEMON_LEAGUE_CHAMPIONS_ROOM", "battleGroup": "champion-rematch", "flag": "FLAG_FOUGHT_MEWTWO"}
+    {"kind": "boss", "text": "Champion rematch: Heracross Lv.72, Alakazam Lv.73, Tyranitar Lv.72, two of Arcanine/Gyarados/Exeggutor Lv.73, starter Lv.75.", "map": "MAP_POKEMON_LEAGUE_CHAMPIONS_ROOM", "battleGroup": "champion-rematch"}
   ]
 }
