@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
-import { getDb, spriteUrl } from '../data/db'
+import { getDb } from '../data/db'
 import type { Pokemon } from '../data/types'
 import { useProgress } from '../store/progress'
 import { typeMatchupSummary } from '../lib/selectors'
@@ -85,7 +85,7 @@ export default function PokemonPage() {
         <div className="relative flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
           <div className="flex items-center justify-center gap-3 sm:w-56 sm:flex-col">
             <div className="relative flex h-44 w-44 items-center justify-center rounded-full bg-white/50 shadow-inner dark:bg-black/25">
-              {showShinyHero ? <Sprite id={id} size={160} className="float h-40 w-40" shiny /> : <img src={spriteUrl.artwork(id)} alt={p.name} className="float h-40 w-40 object-contain drop-shadow-lg" loading="lazy" />}
+              <Sprite id={id} size={160} className="float h-40 w-40" shiny={showShinyHero} />
               {showShinyHero && <span className="absolute right-2 top-2 rounded-full bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-amber-950 shadow">✨ shiny</span>}
             </div>
             <div className="flex gap-2 sm:flex-row">
