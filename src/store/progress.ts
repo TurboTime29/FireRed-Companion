@@ -19,7 +19,14 @@ export interface OwnedMon {
   /** true = in party, false = in a PC box */
   inParty: boolean
   note?: string
+  /** PC box (1-14) and slot (1-30) from the save; party slot for party members */
+  box?: number
+  slot?: number
+  ot?: string
+  friendship?: number
 }
+
+export interface ItemStack { item: number; qty: number }
 
 export interface ProgressDoc {
   version: 1
@@ -39,12 +46,15 @@ export interface ProgressDoc {
   money: number
   keyItems: number[]
   notes: Record<string, string>
+  /** bag and PC item snapshots from the last save import */
+  bag: ItemStack[]
+  pcItems: ItemStack[]
   updatedAt: number
 }
 
 export const emptyProgress = (): ProgressDoc => ({
   version: 1, playerName: '', starter: null, mons: [], badges: Array(8).fill(false), seen: [], caught: [], steps: {}, flags: {}, beaten: {},
-  currentChapter: 1, money: 3000, keyItems: [], notes: {}, updatedAt: 0,
+  currentChapter: 1, money: 3000, keyItems: [], notes: {}, bag: [], pcItems: [], updatedAt: 0,
 })
 
 export function isEmptyProgress(d: ProgressDoc): boolean {
@@ -78,6 +88,8 @@ export function mergeProgress(a: ProgressDoc, b: ProgressDoc): ProgressDoc {
     money: newer.money,
     keyItems: union(a.keyItems, b.keyItems),
     notes: { ...older.notes, ...newer.notes },
+    bag: newer.bag?.length ? newer.bag : older.bag ?? [],
+    pcItems: newer.pcItems?.length ? newer.pcItems : older.pcItems ?? [],
     updatedAt: Math.max(a.updatedAt, b.updatedAt),
   }
 }
@@ -168,7 +180,8 @@ export const useProgress = create<ProgressState>()(
 export function exportProgress(s: ProgressDoc): ProgressDoc {
   return {
     version: 1, playerName: s.playerName, starter: s.starter, mons: s.mons, badges: s.badges, seen: s.seen, caught: s.caught, steps: s.steps,
-    flags: s.flags, beaten: s.beaten, currentChapter: s.currentChapter, money: s.money, keyItems: s.keyItems, notes: s.notes, updatedAt: s.updatedAt,
+    flags: s.flags, beaten: s.beaten, currentChapter: s.currentChapter, money: s.money, keyItems: s.keyItems, notes: s.notes,
+    bag: s.bag ?? [], pcItems: s.pcItems ?? [], updatedAt: s.updatedAt,
   }
 }
 

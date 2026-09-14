@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { Chapter, GuidePart, Item, Location, Move, Pokemon, Trade, Trainer, TypeChart } from './types'
+import type { Chapter, Extras, GuidePart, Item, Location, Move, Pokemon, Trade, Trainer, TypeChart } from './types'
 
 export interface Db {
   pokemon: Pokemon[]
@@ -19,6 +19,7 @@ export interface Db {
   guide: GuidePart[]
   chapters: Chapter[]
   stepById: Map<string, { step: Chapter['steps'][number]; chapter: Chapter }>
+  extras: Extras
   /** species id -> trainers that use it (for "who has X") */
   meta: { commit: string; counts: Record<string, number>; speciesMap?: number[]; flags?: Record<string, number>; trainerFlagsStart?: number; flagsCount?: number }
 }
@@ -38,10 +39,10 @@ export function loadDb(): Promise<Db> {
   if (cached) return Promise.resolve(cached)
   if (pending) return pending
   pending = (async () => {
-    const [pokemon, moves, items, trainers, locations, typechart, trades, guide, chapters, meta] = await Promise.all([
+    const [pokemon, moves, items, trainers, locations, typechart, trades, guide, chapters, meta, extras] = await Promise.all([
       json<Pokemon[]>('pokemon'), json<Move[]>('moves'), json<Item[]>('items'), json<Trainer[]>('trainers'),
       json<Location[]>('locations'), json<TypeChart>('typechart'), json<Trade[]>('trades'), json<GuidePart[]>('guide'),
-      json<Chapter[]>('walkthrough'), json<Db['meta']>('meta'),
+      json<Chapter[]>('walkthrough'), json<Db['meta']>('meta'), json<Extras>('extras'),
     ])
     const stepById = new Map<string, { step: Chapter['steps'][number]; chapter: Chapter }>()
     for (const c of chapters) for (const s of c.steps) stepById.set(s.id, { step: s, chapter: c })
@@ -51,7 +52,7 @@ export function loadDb(): Promise<Db> {
       items, itemById: new Map(items.map((i) => [i.id, i])), itemByKey: new Map(items.map((i) => [i.key, i])),
       trainers, trainerById: new Map(trainers.map((t) => [t.id, t])), trainerByKey: new Map(trainers.map((t) => [t.key, t])),
       locations, locationById: new Map(locations.map((l) => [l.id, l])),
-      typechart, trades, guide, chapters, stepById, meta,
+      typechart, trades, guide, chapters, stepById, meta, extras,
     }
     return cached
   })()

@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getDb } from '../data/db'
-import type { Pokemon } from '../data/types'
+import type { Pokemon, Stats } from '../data/types'
 import { useProgress, type OwnedMon } from '../store/progress'
 import { NATURES, calcStats } from '../lib/battle'
 import { defaultMoves, monAlerts } from '../lib/selectors'
 import { ItemSprite, MoveLink, PageTitle, Section, Sprite, TypeBadge, CategoryIcon, Empty } from '../components/ui'
+import { CoveragePanel } from '../components/CoveragePanel'
 
 function PokemonPicker({ value, onChange }: { value: number | null; onChange: (id: number) => void }) {
   const db = getDb()
@@ -139,11 +140,28 @@ export default function TeamPage() {
   const badges = useProgress((s) => s.badges)
   const setBadge = useProgress((s) => s.setBadge)
   const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [copied, setCopied] = useState(false)
   const party = mons.filter((m) => m.inParty)
   const box = mons.filter((m) => !m.inParty)
+  const copyShowdown = (list: OwnedMon[]) => {
+    const text = list.map((m) => {
+      const p = db.pokemonById.get(m.species)!
+      const lines = [`${m.nickname && m.nickname !== p.name ? `${m.nickname} (${p.name})` : p.name}${m.gender && m.gender !== '-' ? ` (${m.gender})` : ''}${m.item ? ` @ ${db.itemById.get(m.item)?.name}` : ''}`]
+      const ab = p.abilities.find((a) => a.id === m.ability)?.name; if (ab) lines.push(`Ability: ${ab}`)
+      lines.push(`Level: ${m.level}`)
+      if (m.shiny) lines.push('Shiny: Yes')
+      if (m.nature) lines.push(`${m.nature} Nature`)
+      const fmt = (o?: Partial<Stats>, def = 31) => o ? (['hp', 'atk', 'def', 'spa', 'spd', 'spe'] as const).filter((k) => (o[k] ?? def) !== def).map((k) => `${o[k]} ${({ hp: 'HP', atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe' })[k]}`).join(' / ') : ''
+      const ivs = fmt(m.ivs, 31); if (ivs) lines.push(`IVs: ${ivs}`)
+      const evs = fmt(m.evs, 0); if (evs) lines.push(`EVs: ${evs}`)
+      for (const mv of m.moves) lines.push(`- ${db.moveById.get(mv)?.name}`)
+      return lines.join('\n')
+    }).join('\n\n')
+    navigator.clipboard?.writeText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) }).catch(() => alert(text))
+  }
   return (
     <div>
-      <PageTitle sub="Keep this up to date and the guide, battle helper and dashboard adapt to your team." right={<button className="btn-primary" onClick={() => setEditing('new')}>+ Add</button>}>Your team</PageTitle>
+      <PageTitle sub="Keep this up to date and the guide, battle helper and dashboard adapt to your team." right={<div className="flex gap-1"><button className="btn-ghost text-xs" title="Copy the party in Pokémon Showdown format" onClick={() => copyShowdown(party)}>{copied ? 'Copied ✓' : 'Copy team'}</button><button className="btn-primary" onClick={() => setEditing('new')}>+ Add</button></div>}>Your team</PageTitle>
       <Section title="Starter & badges">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex gap-1">{([1, 4, 7] as const).map((s) => <button key={s} onClick={() => setStarter(starter === s ? null : s)} className={`rounded-lg p-1 ring-2 ${starter === s ? 'ring-red-600' : 'ring-transparent hover:ring-stone-300'}`} title={db.pokemonById.get(s)?.name}><Sprite id={s} size={40} /></button>)}</div>
@@ -155,6 +173,9 @@ export default function TeamPage() {
         {party.length === 0 && <Empty>No Pokémon yet. Add your starter to begin.</Empty>}
         <div className="grid gap-2 md:grid-cols-2">{party.map((m) => editing === m.uid ? <MonEditor key={m.uid} mon={m} onSave={(x) => { updateMon(m.uid, x); setEditing(null) }} onCancel={() => setEditing(null)} /> : <MonCard key={m.uid} mon={m} onEdit={() => setEditing(m.uid)} />)}</div>
         {party.length > 6 && <p className="mt-1 text-xs text-red-600">More than 6 in party: move some to the PC.</p>}
+      </Section>
+      <Section title="Team coverage">
+        <CoveragePanel party={party} />
       </Section>
       <Section title={`PC boxes (${box.length})`}>
         {box.length === 0 && <Empty>Nothing boxed.</Empty>}

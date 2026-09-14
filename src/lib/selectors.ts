@@ -2,7 +2,7 @@ import type { Db } from '../data/db'
 import { GYM_LEADERS } from '../data/db'
 import type { Chapter, Move, Pokemon, Trainer, TrainerMon } from '../data/types'
 import type { OwnedMon, ProgressDoc } from '../store/progress'
-import { calcDamage, calcStats, effectiveness, trainerIv, type Combatant, type DamageResult } from './battle'
+import { calcDamage, calcStats, effectiveness, movesFirst, trainerIv, type BattleContext, type Combatant, type DamageResult } from './battle'
 
 /** The rival picks the starter that beats yours. */
 export function rivalStarterFor(playerStarter: number | null): number | null {
@@ -20,19 +20,21 @@ export function trainersForGroup(db: Db, group: string, playerStarter: number | 
   return all
 }
 
-export function toCombatant(db: Db, mon: OwnedMon): Combatant {
+export function toCombatant(db: Db, mon: OwnedMon, badges?: boolean[]): Combatant {
   const p = db.pokemonById.get(mon.species)!
-  return { pokemon: p, level: mon.level, stats: calcStats(p.stats, mon.level, { ivs: mon.ivs, evs: mon.evs, nature: mon.nature }), moves: mon.moves.map((m) => db.moveById.get(m)!).filter(Boolean) }
+  const ability = p.abilities.find((a) => a.id === mon.ability)?.name ?? (p.abilities.length === 1 ? p.abilities[0].name : undefined)
+  return { pokemon: p, level: mon.level, stats: calcStats(p.stats, mon.level, { ivs: mon.ivs, evs: mon.evs, nature: mon.nature }), moves: mon.moves.map((m) => db.moveById.get(m)!).filter(Boolean), ability, item: mon.item ? db.itemById.get(mon.item) : undefined, ivs: mon.ivs, badges }
 }
 
 export function trainerMonToCombatant(db: Db, tm: TrainerMon): Combatant {
   const p = db.pokemonById.get(tm.species)!
   const iv = trainerIv(tm.iv)
-  return { pokemon: p, level: tm.level, stats: calcStats(p.stats, tm.level, { ivs: { hp: iv, atk: iv, def: iv, spa: iv, spd: iv, spe: iv } }), moves: tm.moves.map((m) => db.moveById.get(m)!).filter(Boolean) }
+  const ivs = { hp: iv, atk: iv, def: iv, spa: iv, spd: iv, spe: iv }
+  return { pokemon: p, level: tm.level, stats: calcStats(p.stats, tm.level, { ivs }), moves: tm.moves.map((m) => db.moveById.get(m)!).filter(Boolean), ability: p.abilities[0]?.name, item: tm.item ? db.itemById.get(tm.item) : undefined, ivs }
 }
 
 export function wildCombatant(db: Db, p: Pokemon, level: number, moves?: Move[]): Combatant {
-  return { pokemon: p, level, stats: calcStats(p.stats, level), moves: moves ?? defaultMoves(p, level).map((m) => db.moveById.get(m)!).filter(Boolean) }
+  return { pokemon: p, level, stats: calcStats(p.stats, level), moves: moves ?? defaultMoves(p, level).map((m) => db.moveById.get(m)!).filter(Boolean), ability: p.abilities.length === 1 ? p.abilities[0].name : undefined }
 }
 
 export function defaultMoves(p: Pokemon, level: number): number[] {
@@ -57,12 +59,13 @@ export interface Matchup {
   score: number
 }
 
-export function matchup(db: Db, a: Combatant, d: Combatant): Matchup {
-  const results = a.moves.map((m) => calcDamage(db.typechart, a, d, m)).sort((x, y) => y.maxPct - x.maxPct)
+export function matchup(db: Db, a: Combatant, d: Combatant, ctx: BattleContext = {}): Matchup {
+  const results = a.moves.map((m) => calcDamage(db.typechart, a, d, m, ctx)).sort((x, y) => y.maxPct - x.maxPct)
   const best = results.find((r) => r.max > 0) ?? null
-  const threats = d.moves.map((m) => calcDamage(db.typechart, d, a, m)).sort((x, y) => y.maxPct - x.maxPct)
+  const threats = d.moves.map((m) => calcDamage(db.typechart, d, a, m, ctx)).sort((x, y) => y.maxPct - x.maxPct)
   const threat = threats.find((r) => r.max > 0) ?? null
-  const faster = a.stats.spe === d.stats.spe ? null : a.stats.spe > d.stats.spe
+  const order = movesFirst(a, d, ctx, best?.move, threat?.move)
+  const faster = order === 'tie' ? null : order === 'a'
   const out = best ? (best.minPct + best.maxPct) / 2 : 0
   const inc = threat ? (threat.minPct + threat.maxPct) / 2 : 0
   const score = out - inc * 0.8 + (faster ? 8 : faster === null ? 0 : -8)
@@ -71,11 +74,11 @@ export function matchup(db: Db, a: Combatant, d: Combatant): Matchup {
 
 export interface Readiness { trainer: Trainer; rows: { foe: Combatant; ranked: Matchup[] }[]; verdict: 'strong' | 'ok' | 'risky' | 'unknown'; note: string }
 
-export function readiness(db: Db, party: OwnedMon[], trainer: Trainer): Readiness {
-  const team = party.map((m) => toCombatant(db, m))
+export function readiness(db: Db, party: OwnedMon[], trainer: Trainer, badges?: boolean[], ctx: BattleContext = {}): Readiness {
+  const team = party.map((m) => toCombatant(db, m, badges))
   const rows = trainer.party.map((tm) => {
     const foe = trainerMonToCombatant(db, tm)
-    const ranked = team.map((c) => matchup(db, c, foe)).sort((a, b) => b.score - a.score)
+    const ranked = team.map((c) => matchup(db, c, foe, ctx)).sort((a, b) => b.score - a.score)
     return { foe, ranked }
   })
   if (!team.length) return { trainer, rows, verdict: 'unknown', note: 'Add your party in Team to see a verdict.' }

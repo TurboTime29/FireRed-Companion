@@ -37,6 +37,7 @@ export function EncounterCard({ chapter, step, done, compact }: { chapter: Chapt
         {!compact && (
           <div className="mt-2 flex flex-wrap gap-2">
             <Link to={`/battle?p=${p.id}&lvl=${e.level}`} className="btn-ghost text-xs">Battle plan</Link>
+            <Link to={`/catch?p=${p.id}&lvl=${e.level}`} className="btn-ghost text-xs">🎯 Catch odds</Link>
             <button className="btn-ghost text-xs" onClick={() => { toggleStep(step.id, !done); if (step.flag) setFlag(step.flag, !done) }}>{done ? 'Mark not done' : 'Mark done'}</button>
           </div>
         )}

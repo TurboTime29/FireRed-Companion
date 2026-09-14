@@ -9,6 +9,17 @@ import { calcStats } from '../lib/battle'
 import { useShinySpecies } from '../lib/shiny'
 import { EffChip, ItemLink, LocationLink, MoveTable, PageTitle, PokemonLink, Section, Seg, Sprite, StatBar, TypeBadge, Empty, typeGradient } from '../components/ui'
 
+let cryAudio: HTMLAudioElement | null = null
+function playCry(id: number) {
+  const a = new Audio()
+  if (!a.canPlayType('audio/ogg; codecs="vorbis"')) { alert('This browser cannot play Ogg audio (the format the cries are stored in).'); return }
+  cryAudio?.pause()
+  cryAudio = a
+  a.src = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`
+  a.volume = 0.5
+  a.play().catch(() => { /* blocked or offline */ })
+}
+
 const METHOD: Record<string, string> = { grass: 'Grass', surf: 'Surfing', 'rock-smash': 'Rock Smash', 'old-rod': 'Old Rod', 'good-rod': 'Good Rod', 'super-rod': 'Super Rod', gift: 'Gift', egg: 'Egg', static: 'One-time encounter' }
 
 function evoChain(p: Pokemon): Pokemon[][] {
@@ -92,6 +103,10 @@ export default function PokemonPage() {
               <div className="flex shrink-0 flex-col gap-1">
                 <button onClick={() => markCaught(id)} className={`btn ${caught ? 'bg-emerald-600 text-white shadow' : 'bg-white/70 text-stone-800 hover:bg-white dark:bg-black/30 dark:text-white'}`}>{caught ? '✓ Caught' : 'Mark caught'}</button>
                 <button onClick={() => markSeen(id)} className={`btn ${seen ? 'bg-stone-700 text-white' : 'bg-white/70 text-stone-800 hover:bg-white dark:bg-black/30 dark:text-white'}`}>{seen ? '👁 Seen' : 'Mark seen'}</button>
+                <div className="flex gap-1">
+                  <button onClick={() => playCry(id)} className="btn flex-1 bg-white/70 text-stone-800 hover:bg-white dark:bg-black/30 dark:text-white" title="Play its cry">🔊 Cry</button>
+                  <Link to={`/compare?a=${id}`} className="btn flex-1 bg-white/70 text-stone-800 hover:bg-white dark:bg-black/30 dark:text-white" title="Compare with another Pokémon">⚖️</Link>
+                </div>
               </div>
             </div>
             {shinyOwned.length > 0 && (
@@ -159,7 +174,7 @@ export default function PokemonPage() {
         </Section>
       </div>
 
-      <Section title="Where to find in FireRed">
+      <Section title="Where to find in FireRed" right={<Link className="text-xs link" to={`/catch?p=${p.id}&lvl=${p.locations?.[0]?.max ?? 30}`}>🎯 catch odds →</Link>}>
         {p.locations?.length ? (
           <table className="w-full text-sm">
             <tbody>

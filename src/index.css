@@ -2,7 +2,7 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
+@theme static {
   --color-type-normal: #a8a878;
   --color-type-fire: #f08030;
   --color-type-water: #6890f0;
@@ -50,6 +50,15 @@
   --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 16px 32px -10px rgba(0, 0, 0, 0.7);
 }
 
+.oled {
+  --surface: #000000;
+  --surface-2: #0a0a0a;
+  --ring: rgba(255, 255, 255, 0.12);
+}
+html.oled, .oled body {
+  background-color: #000 !important;
+  background-image: none !important;
+}
 html, body {
   @apply bg-stone-100 text-stone-900 dark:bg-[#141210] dark:text-stone-100;
   -webkit-tap-highlight-color: transparent;

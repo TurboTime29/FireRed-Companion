@@ -5,7 +5,8 @@ import type { Trainer } from '../data/types'
 import { useParty, useProgress } from '../store/progress'
 import { matchup, readiness, toCombatant, trainerDisplayName, trainersForGroup, typeMatchupSummary, wildCombatant } from '../lib/selectors'
 import { MatchupTable } from '../components/MatchupTable'
-import { Empty, PageTitle, PokemonLink, Section, Sprite, TypeBadge, EffChip } from '../components/ui'
+import { Empty, PageTitle, PokemonLink, Section, Seg, Sprite, TypeBadge, EffChip } from '../components/ui'
+import type { BattleContext, Weather } from '../lib/battle'
 
 const GROUP_LABEL: Record<string, string> = {
   'rival-oaks-lab': 'Rival 1 (Lab)', 'rival-route22-early': 'Rival 2 (Route 22)', 'rival-cerulean': 'Rival 3 (Cerulean)', 'rival-ss-anne': 'Rival 4 (S.S. Anne)',
@@ -20,6 +21,11 @@ export default function BattlePage() {
   const badges = useProgress((s) => s.badges)
   const [q, setQ] = useState('')
   const [lvl, setLvl] = useState(Number(params.get('lvl')) || 20)
+  const [weather, setWeather] = useState<Weather>('none')
+  const [crit, setCrit] = useState(false)
+  const [reflect, setReflect] = useState(false)
+  const [lightScreen, setLightScreen] = useState(false)
+  const ctx: BattleContext = { weather, crit, reflect, lightScreen }
   const mode = params.get('t') ? 'trainer' : params.get('p') ? 'pokemon' : 'none'
   const trainer = params.get('t') ? db.trainerById.get(Number(params.get('t'))) : undefined
   const poke = params.get('p') ? db.pokemonById.get(Number(params.get('p'))) : undefined
@@ -37,8 +43,8 @@ export default function BattlePage() {
     ...['rival-oaks-lab', 'rival-route22-early', 'rival-cerulean', 'rival-ss-anne', 'rival-pokemon-tower', 'rival-silph', 'rival-route22-late', 'champion-first'].flatMap((g) => trainersForGroup(db, g, starter).slice(0, 1)),
   ]
   const wild = poke ? wildCombatant(db, poke, lvl) : null
-  const wildRows = wild ? [{ foe: wild, ranked: party.map((m) => matchup(db, toCombatant(db, m), wild)).sort((a, b) => b.score - a.score) }] : []
-  const r = trainer ? readiness(db, party, trainer) : null
+  const wildRows = wild ? [{ foe: wild, ranked: party.map((m) => matchup(db, toCombatant(db, m, badges), wild, ctx)).sort((a, b) => b.score - a.score) }] : []
+  const r = trainer ? readiness(db, party, trainer, badges, ctx) : null
   return (
     <div>
       <PageTitle sub="Pick an opponent to see its weaknesses and which of your Pokémon and moves work best.">Battle helper</PageTitle>
@@ -55,6 +61,16 @@ export default function BattlePage() {
         {quick.map((t) => <button key={t.id} onClick={() => setParams({ t: String(t.id) })} className={`chip-btn ${trainer?.id === t.id ? 'chip-on' : ''}`}>{t.classKey === 'LEADER' ? `Next gym: ${t.name}` : GROUP_LABEL[t.battleGroup ?? ''] ?? trainerDisplayName(t)}</button>)}
       </div>
       {!party.length && <p className="mb-3 rounded bg-amber-100 p-2 text-sm text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">Your party is empty. <Link className="link" to="/team">Add your Pokémon</Link> to get recommendations.</p>}
+      {mode !== 'none' && (
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-stone-500">Conditions:</span>
+          <Seg value={weather} onChange={(v) => setWeather(v)} options={[{ value: 'none', label: 'Clear' }, { value: 'sun', label: '☀ Sun' }, { value: 'rain', label: '🌧 Rain' }, { value: 'sand', label: 'Sand' }, { value: 'hail', label: 'Hail' }]} />
+          <label className="flex items-center gap-1"><input type="checkbox" checked={crit} onChange={(e) => setCrit(e.target.checked)} className="accent-dex-500" /> Critical hit</label>
+          <label className="flex items-center gap-1"><input type="checkbox" checked={reflect} onChange={(e) => setReflect(e.target.checked)} className="accent-dex-500" /> Reflect</label>
+          <label className="flex items-center gap-1"><input type="checkbox" checked={lightScreen} onChange={(e) => setLightScreen(e.target.checked)} className="accent-dex-500" /> Light Screen</label>
+          <span className="text-stone-400">Abilities, held items, your IVs/EVs from the save and badge boosts are already included.</span>
+        </div>
+      )}
 
       {mode === 'pokemon' && poke && wild && (
         <>
@@ -63,6 +79,7 @@ export default function BattlePage() {
               <PokemonLink id={poke.id} showTypes />
               <label className="text-sm">Level <input type="number" min={1} max={100} value={lvl} onChange={(e) => { const v = Math.max(1, Math.min(100, Number(e.target.value) || 1)); setLvl(v); setParams({ p: String(poke.id), lvl: String(v) }) }} className="input inline w-16 py-0.5" /></label>
               <span className="text-xs text-stone-500">likely moves: {wild.moves.map((m) => m.name).join(', ')}</span>
+              <Link to={`/catch?p=${poke.id}&lvl=${lvl}`} className="btn-ghost text-xs">🎯 Catch odds</Link>
             </div>
             <Weak types={poke.types} />
           </Section>

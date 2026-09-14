@@ -1,15 +1,35 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
-/** Page-level chrome shared with the app bar: the current page's title. */
+export interface PageRef { to: string; title: string }
+
+/** Page-level chrome shared with the app bar: the current page's title, recently visited pages and pinned pages. */
 interface Chrome {
   title: string
+  recents: PageRef[]
+  pins: PageRef[]
   setTitle: (t: string) => void
+  pushRecent: (to: string, title: string) => void
+  togglePin: (to: string, title: string) => void
 }
 
-export const useChrome = create<Chrome>()((set) => ({
-  title: '',
-  setTitle: (title) => set((s) => (s.title === title ? s : { title })),
-}))
+export const useChrome = create<Chrome>()(
+  persist(
+    (set) => ({
+      title: '',
+      recents: [],
+      pins: [],
+      setTitle: (title) => set((s) => (s.title === title ? s : { title })),
+      pushRecent: (to, title) => set((s) => {
+        if (to === '/' || !title) return s
+        const recents = [{ to, title }, ...s.recents.filter((r) => r.to !== to)].slice(0, 12)
+        return { recents }
+      }),
+      togglePin: (to, title) => set((s) => ({ pins: s.pins.some((p) => p.to === to) ? s.pins.filter((p) => p.to !== to) : [...s.pins, { to, title }].slice(-12) })),
+    }),
+    { name: 'firered-companion-chrome', version: 1, partialize: (s) => ({ recents: s.recents, pins: s.pins }) as Chrome },
+  ),
+)
 
 /** Top-level tabs and the label / parent of every route family. */
 export const ROOT_LABEL: Record<string, string> = {
@@ -23,11 +43,19 @@ export const ROOT_LABEL: Record<string, string> = {
   '/trainers': 'Trainers',
   '/moves': 'Moves',
   '/items': 'Items',
-  '/tms': 'TMs & HMs',
+  '/tms': 'TM planner',
   '/types': 'Type chart',
   '/trades': 'Trades',
   '/missables': 'Missables',
   '/encounters': 'Encounters',
+  '/catch': 'Catch calculator',
+  '/held-items': 'Held-item farming',
+  '/farming': 'Levels & farming',
+  '/mechanics': 'Mechanics',
+  '/bag': 'Bag & PC',
+  '/breeding': 'Breeding',
+  '/postgame': 'Post-game',
+  '/compare': 'Compare',
   '/search': 'Search',
   '/settings': 'Settings',
 }

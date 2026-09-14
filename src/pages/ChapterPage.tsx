@@ -22,6 +22,22 @@ function StepText({ s }: { s: Step }) {
   )
 }
 
+/** A personal note on a walkthrough step (synced with progress). */
+function StepNote({ id }: { id: string }) {
+  const note = useProgress((s) => s.notes[`step:${id}`] ?? '')
+  const setNote = useProgress((s) => s.setNote)
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(note)
+  if (editing) return (
+    <div className="ml-9 mb-1 flex gap-1">
+      <input value={draft} onChange={(e) => setDraft(e.target.value)} autoFocus placeholder="Your note (e.g. caught a Modest Abra here)" className="input py-1 text-xs" onKeyDown={(e) => { if (e.key === 'Enter') { setNote(`step:${id}`, draft.trim()); setEditing(false) } if (e.key === 'Escape') setEditing(false) }} />
+      <button className="btn-primary py-1 text-xs" onClick={() => { setNote(`step:${id}`, draft.trim()); setEditing(false) }}>Save</button>
+    </div>
+  )
+  if (note) return <div className="ml-9 mb-1 text-xs italic text-amber-800 dark:text-amber-300">📝 {note} <button className="link not-italic" onClick={() => { setDraft(note); setEditing(true) }}>edit</button></div>
+  return <div className="ml-9 -mt-1 mb-1 text-[11px] text-stone-300 hover:text-stone-500 dark:text-stone-700 dark:hover:text-stone-400"><button onClick={() => { setDraft(''); setEditing(true) }}>+ note</button></div>
+}
+
 export default function ChapterPage() {
   const db = getDb()
   const id = useParams().id!
@@ -101,6 +117,7 @@ export default function ChapterPage() {
               <div key={s.id}>
                 {header && db.locationById.get(header) && <LocationBlock loc={db.locationById.get(header)!} />}
                 <Check checked={!!steps[s.id]} onChange={(v) => done(s, v)} label={<StepText s={s} />} kind={s.kind === 'story' ? undefined : s.kind} sub={s.encounter && s.encounter.kind !== 'wild' ? <span className="font-medium text-dex-600 dark:text-red-400">💾 {s.encounter.savePoint}</span> : s.where} />
+                <StepNote id={s.id} />
               </div>
             )
           })}

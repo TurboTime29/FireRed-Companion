@@ -1,10 +1,11 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { getDb, spriteUrl } from '../data/db'
 import type { Item, Move, Pokemon, Trainer, TypeName } from '../data/types'
 import { moveCategory } from '../lib/battle'
 import { useShinySpecies } from '../lib/shiny'
 import { useChrome } from '../store/chrome'
+import { useSettings } from '../store/settings'
 
 export function Section({ title, children, right, className = '' }: { title?: ReactNode; children: ReactNode; right?: ReactNode; className?: string }) {
   return (
@@ -71,8 +72,12 @@ export function TypeBadge({ type, small, onClick, active }: { type: TypeName; sm
 
 export function Sprite({ id, size = 48, back, className = '', shiny }: { id: number; size?: number; back?: boolean; className?: string; shiny?: boolean }) {
   const owned = useShinySpecies()
+  const animated = useSettings((s) => s.animatedSprites)
+  const [broken, setBroken] = useState(false)
   const isShiny = shiny ?? owned.has(id)
-  return <img src={spriteUrl.pokemon(id, back ? 'back' : isShiny ? 'shiny' : 'front')} width={size} height={size} className={`sprite ${className}`} alt="" loading="lazy" title={isShiny ? 'shiny' : undefined} />
+  const anim = animated && !back && !broken && id <= 386
+  const src = anim ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${isShiny ? 'shiny/' : ''}${id}.gif` : spriteUrl.pokemon(id, back ? 'back' : isShiny ? 'shiny' : 'front')
+  return <img src={src} width={size} height={size} className={`${anim ? 'object-contain' : 'sprite'} ${className}`} alt="" loading="lazy" title={isShiny ? 'shiny' : undefined} onError={anim ? () => setBroken(true) : undefined} style={anim ? { width: size, height: size } : undefined} />
 }
 
 export function ItemSprite({ item, size = 24 }: { item: Item; size?: number }) {

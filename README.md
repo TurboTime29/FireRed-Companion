@@ -28,6 +28,16 @@ Supabase sends a magic link. In an iOS/Android home-screen app, tapping it opens
 
 After the first email-code sign-in, Settings → Cloud sync offers **Add passkey on this device**; later sign-ins use **Sign in with passkey** and never leave the app. Supabase side: **Authentication → Passkeys**: enable, Relying Party ID `turbotime29.github.io`, Origins `https://turbotime29.github.io` (add `http://localhost:5173` for local dev). The client enables `auth.experimental.passkey`, which Supabase still labels experimental.
 
+## v2 tools
+
+- **Catch calculator** (`/catch`): exact Gen 3 formula from the decomp (ball multipliers, HP, status, Timer/Nest/Repeat/Net balls) plus the Safari Zone bait/rock model; balls you carry come from the imported save.
+- **Battle helper**: full damage formula (abilities, held items, badge boosts, stat stages, burn, screens, weather, crits), KO chances from the 16 damage rolls, priority-aware speed order, Hidden Power from IVs.
+- **Team coverage** (Team page): best hit per defending type, shared weaknesses, moves (TMs in your bag first) that fill gaps.
+- **TM planner**, **Levels & farming**, **Held-item farming**, **Post-game**, **Breeding**, **Mechanics**, **Bag & PC** (boxes with IVs/EVs/Hidden Power), **Compare**.
+- Polish: Ctrl/⌘ K quick search with recents and pinned pages (☆ in the app bar), cries, animated sprites, OLED theme, text size, per-step notes, Showdown team export.
+
+Rebuild `public/data/extras.json` (Game Corner prizes, abilities) with `python scripts/build_extras.py`.
+
 ## Deploy
 
 Push to `main`; the GitHub Actions workflow builds and publishes to GitHub Pages. Set repository secrets `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to enable cloud sync (schema in `supabase/schema.sql`).

@@ -201,3 +201,7 @@ export interface Chapter {
   guidePart: number
   steps: Step[]
 }
+
+export interface GameCornerPrize { kind: 'pokemon' | 'item'; id: number; key: string; coins: number }
+export interface AbilityInfo { id: number; name: string; text: string; pokemon: number[] }
+export interface Extras { gameCorner: GameCornerPrize[]; abilities: AbilityInfo[] }

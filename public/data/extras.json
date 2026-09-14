@@ -1,0 +1,1142 @@
+{
+"gameCorner": [
+{
+"kind": "pokemon",
+"id": 63,
+"key": "SPECIES_ABRA",
+"coins": 180
+},
+{
+"kind": "pokemon",
+"id": 35,
+"key": "SPECIES_CLEFAIRY",
+"coins": 500
+},
+{
+"kind": "pokemon",
+"id": 147,
+"key": "SPECIES_DRATINI",
+"coins": 2800
+},
+{
+"kind": "pokemon",
+"id": 123,
+"key": "SPECIES_SCYTHER",
+"coins": 5500
+},
+{
+"kind": "pokemon",
+"id": 137,
+"key": "SPECIES_PORYGON",
+"coins": 9999
+},
+{
+"kind": "item",
+"id": 301,
+"key": "ITEM_TM13",
+"coins": 4000
+},
+{
+"kind": "item",
+"id": 311,
+"key": "ITEM_TM23",
+"coins": 3500
+},
+{
+"kind": "item",
+"id": 312,
+"key": "ITEM_TM24",
+"coins": 4000
+},
+{
+"kind": "item",
+"id": 318,
+"key": "ITEM_TM30",
+"coins": 4500
+},
+{
+"kind": "item",
+"id": 323,
+"key": "ITEM_TM35",
+"coins": 4000
+},
+{
+"kind": "item",
+"id": 194,
+"key": "ITEM_SMOKE_BALL",
+"coins": 800
+},
+{
+"kind": "item",
+"id": 205,
+"key": "ITEM_MIRACLE_SEED",
+"coins": 1000
+},
+{
+"kind": "item",
+"id": 215,
+"key": "ITEM_CHARCOAL",
+"coins": 1000
+},
+{
+"kind": "item",
+"id": 209,
+"key": "ITEM_MYSTIC_WATER",
+"coins": 1000
+},
+{
+"kind": "item",
+"id": 40,
+"key": "ITEM_YELLOW_FLUTE",
+"coins": 1600
+}
+],
+"abilities": [
+{
+"id": 71,
+"name": "Arena Trap",
+"text": "Prevents fleeing.",
+"pokemon": [
+50,
+51,
+328
+]
+},
+{
+"id": 4,
+"name": "Battle Armor",
+"text": "Blocks critical hits.",
+"pokemon": [
+140,
+141,
+347,
+348
+]
+},
+{
+"id": 66,
+"name": "Blaze",
+"text": "Ups FIRE moves in a pinch.",
+"pokemon": [
+4,
+5,
+6,
+155,
+156,
+157,
+255,
+256,
+257
+]
+},
+{
+"id": 34,
+"name": "Chlorophyll",
+"text": "Raises SPEED in sunshine.",
+"pokemon": [
+43,
+44,
+45,
+69,
+70,
+71,
+102,
+103,
+114,
+182,
+187,
+188,
+189,
+191,
+192,
+273,
+274,
+275,
+357
+]
+},
+{
+"id": 29,
+"name": "Clear Body",
+"text": "Prevents ability reduction.",
+"pokemon": [
+72,
+73,
+374,
+375,
+376,
+377,
+378,
+379
+]
+},
+{
+"id": 13,
+"name": "Cloud Nine",
+"text": "Negates weather effects.",
+"pokemon": [
+54,
+55
+]
+},
+{
+"id": 16,
+"name": "Color Change",
+"text": "Changes type to foe’s move.",
+"pokemon": [
+352
+]
+},
+{
+"id": 14,
+"name": "Compound Eyes",
+"text": "Raises accuracy.",
+"pokemon": [
+12,
+48,
+193,
+290
+]
+},
+{
+"id": 56,
+"name": "Cute Charm",
+"text": "Infatuates on contact.",
+"pokemon": [
+35,
+36,
+39,
+40,
+173,
+174,
+300,
+301
+]
+},
+{
+"id": 6,
+"name": "Damp",
+"text": "Prevents self-destruction.",
+"pokemon": [
+54,
+55,
+60,
+61,
+62,
+186,
+194,
+195
+]
+},
+{
+"id": 2,
+"name": "Drizzle",
+"text": "Summons rain in battle.",
+"pokemon": [
+382
+]
+},
+{
+"id": 70,
+"name": "Drought",
+"text": "Summons sunlight in battle.",
+"pokemon": [
+383
+]
+},
+{
+"id": 48,
+"name": "Early Bird",
+"text": "Awakens quickly from sleep.",
+"pokemon": [
+84,
+85,
+115,
+165,
+166,
+177,
+178,
+203,
+228,
+229,
+273,
+274,
+275
+]
+},
+{
+"id": 27,
+"name": "Effect Spore",
+"text": "Leaves spores on contact.",
+"pokemon": [
+46,
+47,
+285,
+286
+]
+},
+{
+"id": 49,
+"name": "Flame Body",
+"text": "Burns the foe on contact.",
+"pokemon": [
+126,
+218,
+219,
+240
+]
+},
+{
+"id": 18,
+"name": "Flash Fire",
+"text": "Powers up if hit by fire.",
+"pokemon": [
+37,
+38,
+58,
+59,
+77,
+78,
+136,
+228,
+229
+]
+},
+{
+"id": 59,
+"name": "Forecast",
+"text": "Changes with the weather.",
+"pokemon": [
+351
+]
+},
+{
+"id": 62,
+"name": "Guts",
+"text": "Ups ATTACK if suffering.",
+"pokemon": [
+19,
+20,
+66,
+67,
+68,
+214,
+217,
+236,
+246,
+276,
+277,
+296,
+297
+]
+},
+{
+"id": 37,
+"name": "Huge Power",
+"text": "Raises ATTACK.",
+"pokemon": [
+183,
+184,
+298
+]
+},
+{
+"id": 55,
+"name": "Hustle",
+"text": "Trades accuracy for power.",
+"pokemon": [
+175,
+176,
+222,
+223,
+225
+]
+},
+{
+"id": 52,
+"name": "Hyper Cutter",
+"text": "Prevents ATTACK reduction.",
+"pokemon": [
+98,
+99,
+127,
+207,
+303,
+328,
+341,
+342
+]
+},
+{
+"id": 35,
+"name": "Illuminate",
+"text": "Encounter rate increases.",
+"pokemon": [
+120,
+121,
+170,
+171,
+313
+]
+},
+{
+"id": 17,
+"name": "Immunity",
+"text": "Prevents poisoning.",
+"pokemon": [
+143,
+335
+]
+},
+{
+"id": 39,
+"name": "Inner Focus",
+"text": "Prevents flinching.",
+"pokemon": [
+41,
+42,
+63,
+64,
+65,
+83,
+149,
+169,
+203,
+215,
+361,
+362
+]
+},
+{
+"id": 15,
+"name": "Insomnia",
+"text": "Prevents sleep.",
+"pokemon": [
+96,
+97,
+163,
+164,
+167,
+168,
+198,
+353,
+354
+]
+},
+{
+"id": 22,
+"name": "Intimidate",
+"text": "Lowers the foe’s ATTACK.",
+"pokemon": [
+23,
+24,
+58,
+59,
+128,
+130,
+209,
+210,
+210,
+234,
+237,
+262,
+284,
+303,
+373
+]
+},
+{
+"id": 51,
+"name": "Keen Eye",
+"text": "Prevents loss of accuracy.",
+"pokemon": [
+16,
+17,
+18,
+21,
+22,
+83,
+107,
+161,
+162,
+163,
+164,
+215,
+227,
+278,
+279,
+302
+]
+},
+{
+"id": 26,
+"name": "Levitate",
+"text": "Not hit by GROUND attacks.",
+"pokemon": [
+92,
+93,
+94,
+109,
+110,
+200,
+201,
+329,
+329,
+330,
+330,
+337,
+338,
+343,
+344,
+355,
+358,
+380,
+381
+]
+},
+{
+"id": 31,
+"name": "Lightning Rod",
+"text": "Draws electrical moves.",
+"pokemon": [
+104,
+105,
+111,
+112,
+309,
+310
+]
+},
+{
+"id": 7,
+"name": "Limber",
+"text": "Prevents paralysis.",
+"pokemon": [
+53,
+106,
+132
+]
+},
+{
+"id": 64,
+"name": "Liquid Ooze",
+"text": "Draining causes injury.",
+"pokemon": [
+72,
+73,
+316,
+317
+]
+},
+{
+"id": 40,
+"name": "Magma Armor",
+"text": "Prevents freezing.",
+"pokemon": [
+218,
+219,
+323
+]
+},
+{
+"id": 42,
+"name": "Magnet Pull",
+"text": "Traps STEEL-type POKéMON.",
+"pokemon": [
+81,
+82,
+299
+]
+},
+{
+"id": 63,
+"name": "Marvel Scale",
+"text": "Ups DEFENSE if suffering.",
+"pokemon": [
+350
+]
+},
+{
+"id": 58,
+"name": "Minus",
+"text": "Powers up with PLUS.",
+"pokemon": [
+312
+]
+},
+{
+"id": 30,
+"name": "Natural Cure",
+"text": "Heals upon switching out.",
+"pokemon": [
+113,
+120,
+121,
+222,
+242,
+251,
+315,
+333,
+334
+]
+},
+{
+"id": 12,
+"name": "Oblivious",
+"text": "Prevents attraction.",
+"pokemon": [
+79,
+80,
+108,
+124,
+199,
+220,
+221,
+238,
+314,
+320,
+321,
+322,
+339,
+340
+]
+},
+{
+"id": 65,
+"name": "Overgrow",
+"text": "Ups GRASS moves in a pinch.",
+"pokemon": [
+1,
+2,
+3,
+152,
+153,
+154,
+252,
+253,
+254
+]
+},
+{
+"id": 20,
+"name": "Own Tempo",
+"text": "Prevents confusion.",
+"pokemon": [
+79,
+80,
+108,
+199,
+235,
+325,
+326,
+327
+]
+},
+{
+"id": 53,
+"name": "Pickup",
+"text": "May pick up items.",
+"pokemon": [
+52,
+190,
+216,
+231,
+263,
+264
+]
+},
+{
+"id": 57,
+"name": "Plus",
+"text": "Powers up with MINUS.",
+"pokemon": [
+311
+]
+},
+{
+"id": 38,
+"name": "Poison Point",
+"text": "Poisons foe on contact.",
+"pokemon": [
+29,
+30,
+31,
+32,
+33,
+34,
+117,
+211,
+315
+]
+},
+{
+"id": 46,
+"name": "Pressure",
+"text": "Raises foe’s PP usage.",
+"pokemon": [
+142,
+144,
+145,
+146,
+150,
+243,
+244,
+245,
+249,
+250,
+356,
+359,
+386
+]
+},
+{
+"id": 74,
+"name": "Pure Power",
+"text": "Raises ATTACK.",
+"pokemon": [
+307,
+308
+]
+},
+{
+"id": 44,
+"name": "Rain Dish",
+"text": "Slight HP recovery in rain.",
+"pokemon": [
+270,
+271,
+272
+]
+},
+{
+"id": 69,
+"name": "Rock Head",
+"text": "Prevents recoil damage.",
+"pokemon": [
+74,
+75,
+76,
+95,
+104,
+105,
+111,
+112,
+142,
+185,
+208,
+304,
+305,
+306,
+369,
+371,
+372
+]
+},
+{
+"id": 24,
+"name": "Rough Skin",
+"text": "Hurts to touch.",
+"pokemon": [
+318,
+319
+]
+},
+{
+"id": 50,
+"name": "Run Away",
+"text": "Makes escaping easier.",
+"pokemon": [
+19,
+20,
+77,
+78,
+84,
+85,
+133,
+161,
+162,
+190,
+206,
+209,
+261
+]
+},
+{
+"id": 45,
+"name": "Sand Stream",
+"text": "Summons a sandstorm.",
+"pokemon": [
+248
+]
+},
+{
+"id": 8,
+"name": "Sand Veil",
+"text": "Ups evasion in a sandstorm.",
+"pokemon": [
+27,
+28,
+50,
+51,
+207,
+331,
+332
+]
+},
+{
+"id": 32,
+"name": "Serene Grace",
+"text": "Promotes added effects.",
+"pokemon": [
+113,
+175,
+176,
+206,
+242,
+385
+]
+},
+{
+"id": 23,
+"name": "Shadow Tag",
+"text": "Prevents the foe’s escape.",
+"pokemon": [
+202,
+360
+]
+},
+{
+"id": 61,
+"name": "Shed Skin",
+"text": "Heals the body by shedding.",
+"pokemon": [
+11,
+14,
+23,
+24,
+147,
+148,
+247,
+266,
+268,
+336
+]
+},
+{
+"id": 75,
+"name": "Shell Armor",
+"text": "Blocks critical hits.",
+"pokemon": [
+90,
+91,
+98,
+99,
+131,
+138,
+139,
+341,
+342,
+366
+]
+},
+{
+"id": 19,
+"name": "Shield Dust",
+"text": "Prevents added effects.",
+"pokemon": [
+10,
+13,
+49,
+265,
+269
+]
+},
+{
+"id": 43,
+"name": "Soundproof",
+"text": "Avoids sound-based moves.",
+"pokemon": [
+100,
+101,
+122,
+293,
+294,
+295
+]
+},
+{
+"id": 3,
+"name": "Speed Boost",
+"text": "Gradually boosts SPEED.",
+"pokemon": [
+193,
+291
+]
+},
+{
+"id": 9,
+"name": "Static",
+"text": "Paralyzes on contact.",
+"pokemon": [
+25,
+26,
+100,
+101,
+125,
+172,
+179,
+180,
+181,
+239,
+309,
+310
+]
+},
+{
+"id": 1,
+"name": "Stench",
+"text": "Helps repel wild POKéMON.",
+"pokemon": [
+88,
+89
+]
+},
+{
+"id": 60,
+"name": "Sticky Hold",
+"text": "Prevents item theft.",
+"pokemon": [
+88,
+89,
+316,
+317
+]
+},
+{
+"id": 5,
+"name": "Sturdy",
+"text": "Negates 1-hit KO attacks.",
+"pokemon": [
+74,
+75,
+76,
+81,
+82,
+95,
+185,
+204,
+205,
+208,
+213,
+227,
+232,
+299,
+304,
+305,
+306
+]
+},
+{
+"id": 21,
+"name": "Suction Cups",
+"text": "Firmly anchors the body.",
+"pokemon": [
+224,
+345,
+346
+]
+},
+{
+"id": 68,
+"name": "Swarm",
+"text": "Ups BUG moves in a pinch.",
+"pokemon": [
+15,
+123,
+165,
+166,
+167,
+168,
+212,
+214,
+267,
+313
+]
+},
+{
+"id": 33,
+"name": "Swift Swim",
+"text": "Raises SPEED in rain.",
+"pokemon": [
+116,
+118,
+119,
+129,
+138,
+139,
+140,
+141,
+211,
+226,
+230,
+270,
+271,
+272,
+283,
+349,
+367,
+368,
+369,
+370
+]
+},
+{
+"id": 28,
+"name": "Synchronize",
+"text": "Passes on status problems.",
+"pokemon": [
+63,
+64,
+65,
+151,
+177,
+178,
+196,
+197,
+280,
+281,
+282
+]
+},
+{
+"id": 77,
+"name": "Tangled Feet",
+"text": "Doubles evasion when confused.",
+"pokemon": [
+384
+]
+},
+{
+"id": 47,
+"name": "Thick Fat",
+"text": "Heat-and-cold protection.",
+"pokemon": [
+86,
+87,
+143,
+183,
+184,
+241,
+296,
+297,
+298,
+325,
+326,
+363,
+364,
+365
+]
+},
+{
+"id": 67,
+"name": "Torrent",
+"text": "Ups WATER moves in a pinch.",
+"pokemon": [
+7,
+8,
+9,
+158,
+159,
+160,
+258,
+259,
+260
+]
+},
+{
+"id": 36,
+"name": "Trace",
+"text": "Copies special ability.",
+"pokemon": [
+137,
+233,
+280,
+281,
+282
+]
+},
+{
+"id": 54,
+"name": "Truant",
+"text": "Moves only every two turns.",
+"pokemon": [
+287,
+289
+]
+},
+{
+"id": 72,
+"name": "Vital Spirit",
+"text": "Prevents sleep.",
+"pokemon": [
+56,
+57,
+225,
+288
+]
+},
+{
+"id": 10,
+"name": "Volt Absorb",
+"text": "Turns electricity into HP.",
+"pokemon": [
+135,
+170,
+171
+]
+},
+{
+"id": 11,
+"name": "Water Absorb",
+"text": "Changes water into HP.",
+"pokemon": [
+60,
+61,
+62,
+131,
+134,
+186,
+194,
+195,
+226
+]
+},
+{
+"id": 41,
+"name": "Water Veil",
+"text": "Prevents burns.",
+"pokemon": [
+118,
+119,
+320,
+321
+]
+},
+{
+"id": 73,
+"name": "White Smoke",
+"text": "Prevents ability reduction.",
+"pokemon": [
+324
+]
+},
+{
+"id": 25,
+"name": "Wonder Guard",
+"text": "“Super effective” hits.",
+"pokemon": [
+292
+]
+}
+]
+}

@@ -6,6 +6,7 @@ import { useSettings } from './store/settings'
 import { useSync, useSyncStatus } from './lib/sync'
 import { ROOT_LABEL, TAB_ROOTS, parentOf, useChrome } from './store/chrome'
 import { ErrorBoundary, isStaleChunkError, reloadOnceForStaleChunk, rememberError } from './components/ErrorBoundary'
+import { CommandPalette } from './components/CommandPalette'
 
 /** lazy() that survives a deploy happening while the app is open: a missing chunk reloads the app once instead of crashing. */
 function L<T extends { default: ComponentType }>(f: () => Promise<T>) {
@@ -39,6 +40,14 @@ const TradesPage = L(() => import('./pages/TradesPage'))
 const MissablesPage = L(() => import('./pages/MissablesPage'))
 const TmPage = L(() => import('./pages/TmPage'))
 const EncountersPage = L(() => import('./pages/EncountersPage'))
+const CatchPage = L(() => import('./pages/CatchPage'))
+const HeldItemsPage = L(() => import('./pages/HeldItemsPage'))
+const FarmingPage = L(() => import('./pages/FarmingPage'))
+const MechanicsPage = L(() => import('./pages/MechanicsPage'))
+const BagPage = L(() => import('./pages/BagPage'))
+const BreedingPage = L(() => import('./pages/BreedingPage'))
+const PostgamePage = L(() => import('./pages/PostgamePage'))
+const ComparePage = L(() => import('./pages/ComparePage'))
 
 const tabs = [
   { to: '/', label: 'Home', icon: '🏠' },
@@ -91,8 +100,12 @@ function AppBar() {
   const loc = useLocation()
   const { canGoBack, parent, go } = useBack()
   const title = useChrome((s) => s.title)
+  const pins = useChrome((s) => s.pins)
+  const togglePin = useChrome((s) => s.togglePin)
   const [showSearch, setShowSearch] = useState(false)
   const seg = '/' + loc.pathname.split('/')[1]
+  const here = loc.pathname + loc.search
+  const pinned = pins.some((p) => p.to === here)
   const isRoot = TAB_ROOTS.includes(loc.pathname) || loc.pathname === '/'
   const isHome = loc.pathname === '/'
   const fallback = ROOT_LABEL[loc.pathname] ?? ROOT_LABEL[seg] ?? ''
@@ -116,6 +129,7 @@ function AppBar() {
           )}
           <div className="truncate font-display text-[15px] font-bold tracking-tight md:text-base">{isHome ? 'FireRed Companion' : title || fallback}</div>
         </div>
+        {!isHome && <button type="button" onClick={() => togglePin(here, title || fallback)} className="btn-icon text-white hover:bg-white/15 dark:text-white dark:hover:bg-white/15" aria-label={pinned ? 'Unpin page' : 'Pin page'} title={pinned ? 'Unpin from quick search' : 'Pin to quick search (Ctrl/⌘ K)'}>{pinned ? '★' : '☆'}</button>}
         <div className="hidden w-64 md:block"><SearchBox light /></div>
         <button type="button" onClick={() => setShowSearch(!showSearch)} className="btn-icon text-white hover:bg-white/15 md:hidden dark:text-white dark:hover:bg-white/15" aria-label="Search">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
@@ -191,14 +205,18 @@ export default function App() {
   const theme = useSettings((s) => s.theme)
   const loc = useLocation()
   const title = useChrome((s) => s.title)
+  const pushRecent = useChrome((s) => s.pushRecent)
+  const fontSize = useSettings((s) => s.fontSize)
   useSync()
   useBackGestures()
   useEffect(() => {
-    const dark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    const dark = theme === 'dark' || theme === 'oled' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
     document.documentElement.classList.toggle('dark', dark)
+    document.documentElement.classList.toggle('oled', theme === 'oled')
   }, [theme])
+  useEffect(() => { document.documentElement.style.fontSize = fontSize === 'large' ? '17.5px' : '' }, [fontSize])
   useEffect(() => { window.scrollTo(0, 0) }, [loc.pathname])
-  useEffect(() => { document.title = title ? `${title} · FireRed Companion` : 'FireRed Companion' }, [title])
+  useEffect(() => { document.title = title ? `${title} · FireRed Companion` : 'FireRed Companion'; if (title) pushRecent(loc.pathname + loc.search, title) }, [title, loc.pathname, loc.search, pushRecent])
 
   if (!db) {
     return (
@@ -239,6 +257,14 @@ export default function App() {
                 <Route path="/trades" element={<TradesPage />} />
                 <Route path="/missables" element={<MissablesPage />} />
                 <Route path="/encounters" element={<EncountersPage />} />
+                <Route path="/catch" element={<CatchPage />} />
+                <Route path="/held-items" element={<HeldItemsPage />} />
+                <Route path="/farming" element={<FarmingPage />} />
+                <Route path="/mechanics" element={<MechanicsPage />} />
+                <Route path="/bag" element={<BagPage />} />
+                <Route path="/breeding" element={<BreedingPage />} />
+                <Route path="/postgame" element={<PostgamePage />} />
+                <Route path="/compare" element={<ComparePage />} />
                 <Route path="/search" element={<SearchPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/more" element={<MorePage />} />
@@ -249,6 +275,7 @@ export default function App() {
         </main>
       </div>
       <BottomNav />
+      <CommandPalette />
     </div>
   )
 }

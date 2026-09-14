@@ -16,6 +16,7 @@ export interface ParsedSave {
   mons: OwnedMon[]
   keyItems: number[]
   bag: { item: number; qty: number }[]
+  pcItems: { item: number; qty: number }[]
   starter: 1 | 4 | 7 | null
   /** numeric ids of every set event flag (item balls, hidden items, gifts, beaten trainers) */
   flags: Set<number>
@@ -80,7 +81,7 @@ function loadSlot(file: Uint8Array): Uint8Array[] {
 
 const SUBSTRUCT_ORDER = ['GAEM', 'GAME', 'GEAM', 'GEMA', 'GMAE', 'GMEA', 'AGEM', 'AGME', 'AEGM', 'AEMG', 'AMGE', 'AMEG', 'EGAM', 'EGMA', 'EAGM', 'EAMG', 'EMGA', 'EMAG', 'MGAE', 'MGEA', 'MAGE', 'MAEG', 'MEGA', 'MEAG']
 
-function decodeMon(db: Db, raw: Uint8Array, inParty: boolean, tid: number, sid: number, hasStats: boolean): OwnedMon | null {
+function decodeMon(db: Db, raw: Uint8Array, inParty: boolean, tid: number, sid: number, hasStats: boolean, box?: number, slot?: number): OwnedMon | null {
   const r = new Reader(raw)
   const pid = r.u32(0)
   const otid = r.u32(4)
@@ -108,13 +109,15 @@ function decodeMon(db: Db, raw: Uint8Array, inParty: boolean, tid: number, sid: 
   const nature = NATURE_NAMES[pid % 25]
   const level = hasStats ? r.u8(0x54) : levelFromExp(p.growth, G.u32(4))
   const nickname = decodeText(r.slice(8, 10))
+  const ot = decodeText(r.slice(0x14, 7))
+  const friendship = G.u8(9)
   const ratio = p.femaleRatio
   const gender: OwnedMon['gender'] = ratio === null ? '-' : ratio === 100 ? 'F' : ratio === 0 ? 'M' : (pid & 0xff) < Math.min(254, Math.floor((ratio * 255) / 100)) ? 'F' : 'M'
   const shiny = ((tid ^ sid ^ (pid >>> 16) ^ (pid & 0xffff)) & 0xffff) < 8
   return {
     uid: `sav-${pid.toString(16)}-${otid.toString(16)}`,
     species, nickname: nickname.toUpperCase() === p.name.toUpperCase() ? undefined : nickname, level, moves, item: item && db.itemById.has(item) ? item : undefined,
-    nature, ability: p.abilities[abilitySlot]?.id ?? p.abilities[0]?.id, gender, shiny, ivs, evs, inParty, note: 'sav',
+    nature, ability: p.abilities[abilitySlot]?.id ?? p.abilities[0]?.id, gender, shiny, ivs, evs, inParty, note: 'sav', box, slot, ot: ot || undefined, friendship,
   }
 }
 
@@ -170,7 +173,7 @@ export function parseSave(file: Uint8Array, db: Db): ParsedSave {
   const s1 = new Reader(sb1)
   const partyCount = Math.min(6, s1.u8(0x34))
   const mons: OwnedMon[] = []
-  for (let i = 0; i < partyCount; i++) { const m = decodeMon(db, sb1.subarray(0x38 + i * 100, 0x38 + (i + 1) * 100), true, trainerId, secretId, true); if (m) mons.push(m) }
+  for (let i = 0; i < partyCount; i++) { const m = decodeMon(db, sb1.subarray(0x38 + i * 100, 0x38 + (i + 1) * 100), true, trainerId, secretId, true, 0, i + 1); if (m) mons.push(m) }
   const money = (s1.u32(0x290) ^ secKey) >>> 0
   const badges: boolean[] = []
   const flagBytes = sb1.subarray(0xee0)
@@ -185,19 +188,22 @@ export function parseSave(file: Uint8Array, db: Db): ParsedSave {
     const item = s1.u16(off + i * 4), qty = (s1.u16(off + i * 4 + 2) ^ (secKey & 0xffff)) & 0xffff
     if (item && qty && db.itemById.has(item)) { bag.push({ item, qty }); if (db.itemById.get(item)!.keyItem || db.itemById.get(item)!.move) keyItems.push(item) }
   }
+  // PC item storage (30 slots at 0x298, quantities are not encrypted)
+  const pcItems: { item: number; qty: number }[] = []
+  for (let i = 0; i < 30; i++) { const item = s1.u16(0x298 + i * 4), qty = s1.u16(0x298 + i * 4 + 2); if (item && qty && db.itemById.has(item)) pcItems.push({ item, qty }) }
   // PC storage = sectors 5..13 concatenated; boxes start at +4, 14 boxes × 30 × 80 bytes
   const pc = new Uint8Array(9 * SECTOR_DATA)
   for (let i = 0; i < 9; i++) pc.set(sectors[5 + i].subarray(0, SECTOR_DATA), i * SECTOR_DATA)
   for (let b = 0; b < 14; b++) for (let i = 0; i < 30; i++) {
     const off = 4 + (b * 30 + i) * 80
-    const m = decodeMon(db, pc.subarray(off, off + 80), false, trainerId, secretId, false)
+    const m = decodeMon(db, pc.subarray(off, off + 80), false, trainerId, secretId, false, b + 1, i + 1)
     if (m) mons.push(m)
   }
   // starter guess: first Kanto starter line owned by this trainer in the party/boxes
   const line = (s: number) => [s, s + 1, s + 2]
   let starter: ParsedSave['starter'] = null
   for (const s of [1, 4, 7] as const) if (mons.some((m) => line(s).includes(m.species))) { starter = s; break }
-  return { playerName, trainerId, secretId, playTime, money, badges, seen, caught, mons, keyItems, bag, starter, flags }
+  return { playerName, trainerId, secretId, playTime, money, badges, seen, caught, mons, keyItems, bag, pcItems, starter, flags }
 }
 
 export interface StoryProgress {
