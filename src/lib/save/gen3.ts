@@ -213,11 +213,21 @@ export interface StoryProgress {
 export function inferStoryProgress(save: ParsedSave, db: Db): StoryProgress {
   const names = db.meta.flags ?? {}
   const has = (name: string) => { const id = names[name]; return id !== undefined && save.flags.has(id) }
-  const flags: string[] = []
-  for (const l of db.locations) for (const b of [...l.items, ...l.hiddenItems]) if (b.flag && has(b.flag)) flags.push(b.flag)
   const start = db.meta.trainerFlagsStart ?? 0x500
   const beaten = db.trainers.filter((t) => save.flags.has(start + t.id)).map((t) => t.id)
   const beatenSet = new Set(beaten)
+  // Item-ball flags are reliable. Hidden-item flags are NOT: FireRed pre-sets the flags of respawning hidden
+  // items (berries, pearls, shards) on maps you have never visited, so only trust them on maps with other evidence.
+  const flags: string[] = []
+  const visited = new Set<string>()
+  for (const l of db.locations) {
+    let seen = l.trainers.some((t) => beatenSet.has(t))
+    for (const b of l.items) if (b.flag && has(b.flag)) { flags.push(b.flag); seen = true }
+    if (seen) visited.add(l.id)
+  }
+  for (const l of db.locations) if (visited.has(l.id)) for (const b of l.hiddenItems) if (b.flag && has(b.flag)) flags.push(b.flag)
+  const hiddenFlags = new Set(db.locations.flatMap((l) => l.hiddenItems.map((b) => b.flag)))
+  const flagSet = new Set(flags)
   const gotFlagNames = Object.keys(names).filter((n) => n.startsWith('FLAG_GOT_'))
   const gotItem = (itemId: number) => {
     const key = db.itemById.get(itemId)?.key.replace('ITEM_', '')
@@ -227,22 +237,34 @@ export function inferStoryProgress(save: ParsedSave, db: Db): StoryProgress {
   const steps: string[] = []
   let lastDoneChapter = 0
   for (const c of db.chapters) {
-    const doneIdx: number[] = []
+    const strongIdx: number[] = []
+    const verified: string[] = []
+    const verifiable = new Set<string>()
     c.steps.forEach((s, i) => {
+      const isHidden = !!s.flag && hiddenFlags.has(s.flag)
+      const canVerify = isHidden || !!s.flag || !!s.trainers?.length || !!s.battleGroup || !!s.badge
+      if (canVerify) verifiable.add(s.id)
       let done = false
-      if (s.flag && has(s.flag)) done = true
+      if (isHidden) done = flagSet.has(s.flag!)
+      else if (s.flag && has(s.flag)) done = true
       else if (s.trainers?.length && s.trainers.every((t) => beatenSet.has(t))) done = true
       else if (s.battleGroup && db.trainers.some((t) => t.battleGroup === s.battleGroup && beatenSet.has(t.id))) done = true
       else if (s.badge && save.badges[s.badge - 1]) done = true
       else if (s.kind === 'gift' && s.items?.some(gotItem)) done = true
-      if (done) doneIdx.push(i)
+      if (done) { verified.push(s.id); if (!isHidden) strongIdx.push(i) }
     })
-    if (doneIdx.length) lastDoneChapter = c.n
-    // everything up to the last verifiable step in this chapter counts as done
-    const upto = doneIdx.length ? Math.max(...doneIdx) : -1
-    c.steps.forEach((s, i) => { if (i <= upto && s.kind !== 'tip') steps.push(s.id) })
+    if (strongIdx.length) lastDoneChapter = c.n
+    // Verifiable steps (trainers, item balls, hidden items, badges) are ticked only on direct evidence.
+    // Plain story/tip-style steps before the last verified step are assumed done.
+    const upto = strongIdx.length ? Math.max(...strongIdx) : -1
+    c.steps.forEach((s, i) => { if (i <= upto && s.kind !== 'tip' && !verifiable.has(s.id)) steps.push(s.id) })
+    steps.push(...verified)
   }
-  // chapters before the furthest one with confirmed progress are complete
-  for (const c of db.chapters) if (c.n < lastDoneChapter) for (const s of c.steps) if (s.kind !== 'tip' && !steps.includes(s.id)) steps.push(s.id)
+  // in chapters before the furthest one with confirmed progress, the unverifiable story steps are complete
+  const stepSet = new Set(steps)
+  for (const c of db.chapters) if (c.n < lastDoneChapter) for (const s of c.steps) {
+    const canVerify = !!s.flag || !!s.trainers?.length || !!s.battleGroup || !!s.badge
+    if (s.kind !== 'tip' && !canVerify && !stepSet.has(s.id)) { steps.push(s.id); stepSet.add(s.id) }
+  }
   return { flags, beaten, steps, currentChapter: Math.max(1, lastDoneChapter) }
 }
