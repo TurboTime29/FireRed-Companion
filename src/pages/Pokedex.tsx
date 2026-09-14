@@ -1,11 +1,18 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { getDb } from '../data/db'
 import type { TypeName } from '../data/types'
 import { useProgress } from '../store/progress'
-import { PageTitle, Sprite, TypeBadge } from '../components/ui'
+import { Empty, PageTitle, Progress, Seg, Sprite, TypeBadge, typeGradient } from '../components/ui'
 
 const TYPES: TypeName[] = ['Normal', 'Fire', 'Water', 'Electric', 'Grass', 'Ice', 'Fighting', 'Poison', 'Ground', 'Flying', 'Psychic', 'Bug', 'Rock', 'Ghost', 'Dragon', 'Dark', 'Steel']
+
+const AVAIL_CHIP: Record<string, [string, string]> = {
+  'trade-only': ['trade only', 'bg-stone-300 text-stone-700 dark:bg-stone-700 dark:text-stone-200'],
+  'trade-evolution': ['trade to evolve', 'bg-sky-200 text-sky-900 dark:bg-sky-900 dark:text-sky-100'],
+  gift: ['gift', 'bg-pink-200 text-pink-900 dark:bg-pink-900 dark:text-pink-100'],
+  event: ['event', 'bg-stone-300 text-stone-700 dark:bg-stone-700 dark:text-stone-200'],
+}
 
 export default function Pokedex() {
   const db = getDb()
@@ -13,6 +20,7 @@ export default function Pokedex() {
   const [type, setType] = useState<TypeName | ''>('')
   const [scope, setScope] = useState<'kanto' | 'all' | 'catchable' | 'kantoall'>('kanto')
   const [only, setOnly] = useState<'all' | 'caught' | 'missing'>('all')
+  const [showTypes, setShowTypes] = useState(false)
   const caught = useProgress((s) => s.caught)
   const seen = useProgress((s) => s.seen)
   const markCaught = useProgress((s) => s.markCaught)
@@ -27,29 +35,61 @@ export default function Pokedex() {
     return true
   }), [db, q, type, scope, only, caught])
   const kantoCaught = caught.filter((i) => i <= 151).length
+  const kantoSeen = seen.filter((i) => i <= 151).length
+  const filterKey = `${q}|${type}|${scope}|${only}`
   return (
     <div>
-      <PageTitle sub={<>Kanto caught: <b>{kantoCaught}</b>/151 · seen {seen.filter((i) => i <= 151).length} · National caught {caught.length}/386 {kantoCaught < 60 && <span className="ml-1 text-amber-600">({60 - kantoCaught} more caught for the National Dex)</span>}</>}>Pokédex</PageTitle>
-      <div className="mb-3 flex flex-wrap gap-2">
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or number" className="input max-w-[180px]" />
-        <select value={type} onChange={(e) => setType(e.target.value as TypeName | '')} className="input max-w-[140px]"><option value="">Any type</option>{TYPES.map((t) => <option key={t}>{t}</option>)}</select>
-        <select value={scope} onChange={(e) => setScope(e.target.value as typeof scope)} className="input max-w-[200px]"><option value="kanto">Kanto, obtainable in FireRed</option><option value="catchable">Wild in FireRed only</option><option value="kantoall">All Kanto (incl. trade-only)</option><option value="all">National (1–386)</option></select>
-        <select value={only} onChange={(e) => setOnly(e.target.value as typeof only)} className="input max-w-[130px]"><option value="all">All</option><option value="caught">Caught</option><option value="missing">Not caught</option></select>
-      </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-        {list.map((p) => (
-          <div key={p.id} className={`card flex items-center gap-2 p-2 ${caught.includes(p.id) ? 'ring-emerald-400' : ''}`}>
-            <Link to={`/dex/${p.id}`} className="flex min-w-0 flex-1 items-center gap-2">
-              <Sprite id={p.id} size={48} />
-              <div className="min-w-0">
-                <div className="truncate font-medium">{p.name}</div>
-                <div className="text-xs text-stone-500">#{String(p.id).padStart(3, '0')}</div>
-                <div className="mt-0.5 flex flex-wrap gap-1">{p.types.map((t) => <TypeBadge key={t} type={t} small />)}{p.availability === 'trade-only' && <span className="chip bg-stone-300 text-[10px] text-stone-700 dark:bg-stone-700 dark:text-stone-200">trade only</span>}{p.availability === 'trade-evolution' && <span className="chip bg-sky-200 text-[10px] text-sky-900 dark:bg-sky-900 dark:text-sky-100">trade to evolve</span>}{p.availability === 'gift' && <span className="chip bg-pink-200 text-[10px] text-pink-900 dark:bg-pink-900 dark:text-pink-100">gift</span>}{p.availability === 'event' && <span className="chip bg-stone-300 text-[10px] text-stone-700 dark:bg-stone-700 dark:text-stone-200">event</span>}</div>
-              </div>
-            </Link>
-            <button onClick={() => markCaught(p.id)} title="Toggle caught" className={`h-7 w-7 shrink-0 rounded-full text-sm ${caught.includes(p.id) ? 'bg-emerald-500 text-white' : seen.includes(p.id) ? 'bg-stone-300 dark:bg-stone-700' : 'bg-stone-200 text-stone-400 dark:bg-stone-800'}`}>{caught.includes(p.id) ? '✓' : seen.includes(p.id) ? '👁' : '○'}</button>
+      <PageTitle hero sub={<>National caught {caught.length}/386 {kantoCaught < 60 && <span className="text-amber-600">· {60 - kantoCaught} more Kanto catches unlock the National Dex</span>}</>}>Pokédex</PageTitle>
+
+      <div className="card mb-3 overflow-hidden">
+        <div className="grid grid-cols-2 divide-x divide-stone-100 dark:divide-stone-800">
+          <div className="p-3">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-stone-500">Kanto caught</div>
+            <div className="font-display text-2xl font-bold">{kantoCaught}<span className="text-base font-normal text-stone-400">/151</span></div>
+            <Progress pct={(kantoCaught / 151) * 100} className="mt-1" color="bg-emerald-500" />
           </div>
-        ))}
+          <div className="p-3">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-stone-500">Kanto seen</div>
+            <div className="font-display text-2xl font-bold">{kantoSeen}<span className="text-base font-normal text-stone-400">/151</span></div>
+            <Progress pct={(kantoSeen / 151) * 100} className="mt-1" color="bg-sky-500" />
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-3 space-y-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or number" className="input max-w-[200px]" />
+          <Seg value={only} onChange={(v) => setOnly(v)} options={[{ value: 'all', label: 'All' }, { value: 'caught', label: '✓ Caught' }, { value: 'missing', label: 'Not caught' }]} />
+          <button type="button" onClick={() => setShowTypes(!showTypes)} className={`chip-btn ${type ? 'chip-on' : ''}`}>{type ? `Type: ${type} ✕` : showTypes ? 'Hide types' : 'Filter by type'}</button>
+        </div>
+        {showTypes && (
+          <div className="fade-up flex flex-wrap gap-1">
+            {TYPES.map((t) => <TypeBadge key={t} type={t} onClick={() => setType(type === t ? '' : t)} active={type ? type === t : undefined} />)}
+          </div>
+        )}
+        <Seg value={scope} onChange={(v) => setScope(v)} className="flex-wrap" options={[{ value: 'kanto', label: 'Obtainable in FireRed' }, { value: 'catchable', label: 'Wild only' }, { value: 'kantoall', label: 'All Kanto' }, { value: 'all', label: 'National 1–386' }]} />
+      </div>
+
+      <div className="mb-2 text-xs text-stone-500">{list.length} Pokémon</div>
+      {list.length === 0 && <Empty>No Pokémon match those filters.</Empty>}
+      <div key={filterKey} className="stagger grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+        {list.map((p, i) => {
+          const isCaught = caught.includes(p.id), isSeen = seen.includes(p.id)
+          const avail = AVAIL_CHIP[p.availability]
+          return (
+            <div key={p.id} style={{ '--i': i % 24 } as CSSProperties} className={`card card-hover relative overflow-hidden ${isCaught ? 'outline outline-2 -outline-offset-2 outline-emerald-400' : ''}`}>
+              <Link to={`/dex/${p.id}`} className="hover-bounce flex items-center gap-2.5 p-2.5" style={{ background: typeGradient(p.types, 0.3) }}>
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/60 shadow-inner dark:bg-black/25"><Sprite id={p.id} size={56} /></div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[10px] font-bold tabular-nums tracking-wider text-stone-600 dark:text-stone-300">#{String(p.id).padStart(3, '0')}</div>
+                  <div className="truncate font-display text-[15px] font-bold leading-tight">{p.name}</div>
+                  <div className="mt-1 flex flex-wrap gap-1">{p.types.map((t) => <TypeBadge key={t} type={t} small />)}{avail && <span className={`chip text-[10px] ${avail[1]}`}>{avail[0]}</span>}</div>
+                </div>
+              </Link>
+              <button onClick={() => markCaught(p.id)} title={isCaught ? 'Caught (tap to undo)' : 'Mark caught'} className={`absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full text-xs shadow transition-transform active:scale-90 ${isCaught ? 'bg-emerald-500 text-white' : isSeen ? 'bg-white/80 text-stone-500 dark:bg-stone-800/80' : 'bg-white/60 text-stone-400 dark:bg-stone-800/60'}`}>{isCaught ? '✓' : isSeen ? '👁' : '○'}</button>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

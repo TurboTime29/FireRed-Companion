@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { getDb, spriteUrl } from '../data/db'
 import type { Pokemon } from '../data/types'
 import { useProgress } from '../store/progress'
 import { typeMatchupSummary } from '../lib/selectors'
 import { calcStats } from '../lib/battle'
 import { useShinySpecies } from '../lib/shiny'
-import { EffChip, ItemLink, LocationLink, MoveTable, PageTitle, PokemonLink, Section, Sprite, StatBar, TypeBadge, Empty } from '../components/ui'
+import { EffChip, ItemLink, LocationLink, MoveTable, PageTitle, PokemonLink, Section, Seg, Sprite, StatBar, TypeBadge, Empty, typeGradient } from '../components/ui'
 
 const METHOD: Record<string, string> = { grass: 'Grass', surf: 'Surfing', 'rock-smash': 'Rock Smash', 'old-rod': 'Old Rod', 'good-rod': 'Good Rod', 'super-rod': 'Super Rod', gift: 'Gift', egg: 'Egg', static: 'One-time encounter' }
 
@@ -61,47 +62,69 @@ export default function PokemonPage() {
   const trainersWith = db.trainers.filter((t) => t.party.some((x) => x.species === id) && t.rematchOf === undefined).slice(0, 12)
   const inFireRed = (p.locations?.length ?? 0) > 0
   const prev = db.pokemonById.get(id - 1), next = db.pokemonById.get(id + 1)
+  const showShinyHero = isShiny || previewShiny
   return (
     <div>
-      <div className="mb-2 flex justify-between text-sm">{prev ? <Link className="link" to={`/dex/${prev.id}`}>← #{prev.id} {prev.name}</Link> : <span />}{next ? <Link className="link" to={`/dex/${next.id}`}>#{next.id} {next.name} →</Link> : <span />}</div>
-      <div className="card mb-3 flex flex-col gap-3 p-3 sm:flex-row">
-        <div className="flex items-center justify-center gap-2 sm:w-48">
-          {isShiny || previewShiny ? <Sprite id={id} size={160} className="h-40 w-40" shiny /> : <img src={spriteUrl.artwork(id)} alt={p.name} className="h-40 w-40 object-contain" loading="lazy" />}
-          <div className="flex flex-col items-center gap-1 text-[10px] text-stone-500">
-            <Sprite id={id} size={56} shiny={false} /><span>normal</span>
-            <button type="button" onClick={() => setPreviewShiny(!previewShiny)} className={`rounded-lg p-0.5 ring-2 ${previewShiny || isShiny ? 'ring-amber-400' : 'ring-transparent hover:ring-stone-400'}`} title="Preview the shiny colours"><Sprite id={id} size={56} shiny /></button><span>✨ shiny{previewShiny || isShiny ? '' : ' · tap'}</span>
+      <div className="hidden"><PageTitle>{`#${String(id).padStart(3, '0')} ${p.name}`}</PageTitle></div>
+
+      {/* hero */}
+      <div key={id} className="card fade-up relative mb-3 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: typeGradient(p.types, 0.45) }} />
+        <div className="pointer-events-none absolute -right-8 -top-10 select-none font-display text-[140px] font-black leading-none text-white/25 dark:text-white/10">{String(id).padStart(3, '0')}</div>
+        <div className="relative flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+          <div className="flex items-center justify-center gap-3 sm:w-56 sm:flex-col">
+            <div className="relative flex h-44 w-44 items-center justify-center rounded-full bg-white/50 shadow-inner dark:bg-black/25">
+              {showShinyHero ? <Sprite id={id} size={160} className="float h-40 w-40" shiny /> : <img src={spriteUrl.artwork(id)} alt={p.name} className="float h-40 w-40 object-contain drop-shadow-lg" loading="lazy" />}
+              {showShinyHero && <span className="absolute right-2 top-2 rounded-full bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-amber-950 shadow">✨ shiny</span>}
+            </div>
+            <div className="flex gap-2 sm:flex-row">
+              <button type="button" onClick={() => setPreviewShiny(false)} className={`flex flex-col items-center rounded-xl bg-white/50 p-1 text-[10px] text-stone-600 ring-2 transition dark:bg-black/25 dark:text-stone-300 ${!showShinyHero ? 'ring-stone-800 dark:ring-white' : 'ring-transparent hover:ring-stone-400'}`} title="Normal colours"><Sprite id={id} size={48} shiny={false} />normal</button>
+              <button type="button" onClick={() => setPreviewShiny(true)} className={`flex flex-col items-center rounded-xl bg-white/50 p-1 text-[10px] text-stone-600 ring-2 transition dark:bg-black/25 dark:text-stone-300 ${showShinyHero ? 'ring-amber-400' : 'ring-transparent hover:ring-amber-300'}`} title="Preview the shiny colours"><Sprite id={id} size={48} shiny />✨ shiny</button>
+            </div>
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <div className="text-xs font-bold tabular-nums tracking-widest text-stone-700 dark:text-stone-200">#{String(id).padStart(3, '0')} · {p.category} Pokémon</div>
+                <h1 className="font-display text-3xl font-black leading-tight md:text-4xl">{p.name}</h1>
+                <div className="mt-1.5 flex gap-1">{p.types.map((t) => <TypeBadge key={t} type={t} />)}</div>
+              </div>
+              <div className="flex shrink-0 flex-col gap-1">
+                <button onClick={() => markCaught(id)} className={`btn ${caught ? 'bg-emerald-600 text-white shadow' : 'bg-white/70 text-stone-800 hover:bg-white dark:bg-black/30 dark:text-white'}`}>{caught ? '✓ Caught' : 'Mark caught'}</button>
+                <button onClick={() => markSeen(id)} className={`btn ${seen ? 'bg-stone-700 text-white' : 'bg-white/70 text-stone-800 hover:bg-white dark:bg-black/30 dark:text-white'}`}>{seen ? '👁 Seen' : 'Mark seen'}</button>
+              </div>
+            </div>
+            {shinyOwned.length > 0 && (
+              <div className="mt-2 rounded-xl border border-amber-400 bg-amber-50/90 px-2.5 py-1.5 text-sm text-amber-900 dark:border-amber-600 dark:bg-amber-950/60 dark:text-amber-100">
+                ✨ You own a <b>shiny {p.name}</b>{shinyOwned.map((x) => ` · ${x.nickname ? `${x.nickname} ` : ''}Lv.${x.level} (${x.inParty ? 'party' : 'PC'})`).join('')}
+              </div>
+            )}
+            {shinyOwned.length === 0 && isShiny && <div className="mt-2 text-xs text-amber-800 dark:text-amber-300">✨ Shown shiny because you own its shiny evolution.</div>}
+            {owned.length > 0 && shinyOwned.length === 0 && <div className="mt-2 text-xs text-stone-700 dark:text-stone-300">You own: {owned.map((x) => `${x.nickname ? `${x.nickname} ` : ''}Lv.${x.level} (${x.inParty ? 'party' : 'PC'})`).join(', ')}</div>}
+            <p className="mt-2 text-sm leading-relaxed text-stone-800 dark:text-stone-200">{p.dexText}</p>
+            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-700 dark:text-stone-300">
+              <span>{p.height} m</span><span>{p.weight} kg</span><span>Catch rate {p.catchRate}</span><span>Exp {p.expYield}</span><span>{p.growth} growth</span><span>{p.femaleRatio === null ? 'genderless' : `${100 - p.femaleRatio}% ♂ / ${p.femaleRatio}% ♀`}</span><span>Eggs: {p.eggGroups.join(', ')}</span>
+            </div>
+            <div className="mt-2 text-sm"><b>Abilit{p.abilities.length > 1 ? 'ies' : 'y'}:</b> {p.abilities.map((a) => <span key={a.id} className="mr-2" title={a.text}>{a.name} <span className="text-stone-600 dark:text-stone-400">({a.text})</span></span>)}</div>
+            {p.heldItems.length > 0 && <div className="mt-1 text-sm">Wild held: {p.heldItems.map((i) => <ItemLink key={i} id={i} />)}</div>}
+            {p.availability === 'trade-only' && <div className="mt-2 rounded-lg bg-amber-100 px-2 py-1 text-xs text-amber-900 dark:bg-amber-900/50 dark:text-amber-100">Not obtainable in FireRed. It only comes from a trade with another game{p.id <= 151 ? ' (LeafGreen has it)' : ''}.</div>}
+            {p.availability === 'event' && <div className="mt-2 rounded-lg bg-amber-100 px-2 py-1 text-xs text-amber-900 dark:bg-amber-900/50 dark:text-amber-100">Event-only Pokémon: not obtainable in normal play.</div>}
+            {p.availability === 'evolution' && !inFireRed && <div className="mt-2 text-xs text-stone-700 dark:text-stone-300">Not in the wild: evolve {db.pokemonById.get(p.evolvesFrom!)?.name}.</div>}
+            {p.availability === 'trade-evolution' && <div className="mt-2 rounded-lg bg-sky-100 px-2 py-1 text-xs text-sky-900 dark:bg-sky-900/50 dark:text-sky-100">Only by trading {db.pokemonById.get(p.evolvesFrom!)?.name} to another game and back (link cable or wireless adapter).</div>}
           </div>
         </div>
-        <div className="flex-1">
-          <PageTitle sub={<>#{String(id).padStart(3, '0')} · {p.category} Pokémon · {p.height} m · {p.weight} kg</>} right={
-            <div className="flex gap-1">
-              <button onClick={() => markSeen(id)} className={`btn ${seen ? 'bg-stone-400 text-white' : 'btn-ghost'}`}>Seen</button>
-              <button onClick={() => markCaught(id)} className={`btn ${caught ? 'bg-emerald-600 text-white' : 'btn-ghost'}`}>{caught ? '✓ Caught' : 'Caught'}</button>
-            </div>}>{p.name}</PageTitle>
-          <div className="mb-2 flex gap-1">{p.types.map((t) => <TypeBadge key={t} type={t} />)}</div>
-          {shinyOwned.length > 0 && (
-            <div className="mb-2 rounded-lg border border-amber-400 bg-amber-50 px-2 py-1 text-sm text-amber-900 dark:border-amber-600 dark:bg-amber-950/40 dark:text-amber-100">
-              ✨ You own a <b>shiny {p.name}</b>{shinyOwned.map((m) => ` · ${m.nickname ? `${m.nickname} ` : ''}Lv.${m.level} (${m.inParty ? 'party' : 'PC'})`).join('')}
-            </div>
-          )}
-          {shinyOwned.length === 0 && isShiny && <div className="mb-2 text-xs text-amber-700 dark:text-amber-400">✨ Shown shiny because you own its shiny evolution.</div>}
-          {owned.length > 0 && shinyOwned.length === 0 && <div className="mb-2 text-xs text-stone-500">You own: {owned.map((m) => `${m.nickname ? `${m.nickname} ` : ''}Lv.${m.level} (${m.inParty ? 'party' : 'PC'})`).join(', ')}</div>}
-          <p className="text-sm text-stone-600 dark:text-stone-300">{p.dexText}</p>
-          <div className="mt-2 text-sm">
-            <b>Abilit{p.abilities.length > 1 ? 'ies' : 'y'}:</b> {p.abilities.map((a) => <span key={a.id} className="mr-2" title={a.text}>{a.name} <span className="text-stone-500">({a.text})</span></span>)}
-          </div>
-          <div className="mt-1 text-sm text-stone-600 dark:text-stone-300">Catch rate {p.catchRate} · Exp yield {p.expYield} · {p.growth} growth · {p.femaleRatio === null ? 'genderless' : `${100 - p.femaleRatio}% ♂ / ${p.femaleRatio}% ♀`} · Egg groups: {p.eggGroups.join(', ')}{p.heldItems.length ? <> · Wild held: {p.heldItems.map((i) => <ItemLink key={i} id={i} />)}</> : null}</div>
-          {p.availability === 'trade-only' && <div className="mt-2 rounded bg-amber-100 px-2 py-1 text-xs text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">Not obtainable in FireRed. It only comes from a trade with another game{p.id <= 151 ? ' (LeafGreen has it)' : ''}.</div>}
-          {p.availability === 'event' && <div className="mt-2 rounded bg-amber-100 px-2 py-1 text-xs text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">Event-only Pokémon: not obtainable in normal play.</div>}
-          {p.availability === 'evolution' && !inFireRed && <div className="mt-2 text-xs text-stone-500">Not in the wild: evolve {db.pokemonById.get(p.evolvesFrom!)?.name}.</div>}
-          {p.availability === 'trade-evolution' && <div className="mt-2 rounded bg-sky-100 px-2 py-1 text-xs text-sky-900 dark:bg-sky-900/40 dark:text-sky-100">Only by trading {db.pokemonById.get(p.evolvesFrom!)?.name} to another game and back (link cable or wireless adapter).</div>}
+        <div className="relative flex justify-between border-t border-white/40 bg-white/40 px-2 py-1.5 text-sm dark:border-white/10 dark:bg-black/20">
+          {prev ? <Link className="hover-bounce flex items-center gap-1 rounded-lg px-2 py-1 hover:bg-white/60 dark:hover:bg-black/30" to={`/dex/${prev.id}`}>‹ <Sprite id={prev.id} size={28} /> <span className="text-xs text-stone-600 dark:text-stone-300">#{prev.id}</span> {prev.name}</Link> : <span />}
+          {next ? <Link className="hover-bounce flex items-center gap-1 rounded-lg px-2 py-1 hover:bg-white/60 dark:hover:bg-black/30" to={`/dex/${next.id}`}>{next.name} <span className="text-xs text-stone-600 dark:text-stone-300">#{next.id}</span> <Sprite id={next.id} size={28} /> ›</Link> : <span />}
         </div>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
-        <Section title={<>Base stats <span className="normal-case text-stone-400">(total {total})</span></>} right={<label className="text-xs">at Lv.<input type="number" min={1} max={100} value={lvl} onChange={(e) => setLvl(Number(e.target.value) || 1)} className="input ml-1 inline w-16 py-0.5" /></label>}>
-          <StatBar label="HP" value={p.stats.hp} /><StatBar label="Attack" value={p.stats.atk} /><StatBar label="Defense" value={p.stats.def} /><StatBar label="Sp. Atk" value={p.stats.spa} /><StatBar label="Sp. Def" value={p.stats.spd} /><StatBar label="Speed" value={p.stats.spe} />
-          <div className="mt-2 text-xs text-stone-500">Stats at Lv.{lvl} (IV 15, no EVs, neutral nature): HP {at50.hp} · Atk {at50.atk} · Def {at50.def} · SpA {at50.spa} · SpD {at50.spd} · Spe {at50.spe}</div>
+        <Section title={<>Base stats <span className="normal-case tracking-normal text-stone-400">(total {total})</span></>} right={<label className="text-xs">at Lv.<input type="number" min={1} max={100} value={lvl} onChange={(e) => setLvl(Number(e.target.value) || 1)} className="input ml-1 inline w-16 py-0.5" /></label>}>
+          <div key={id} className="space-y-1">
+            <StatBar label="HP" value={p.stats.hp} /><StatBar label="Attack" value={p.stats.atk} /><StatBar label="Defense" value={p.stats.def} /><StatBar label="Sp. Atk" value={p.stats.spa} /><StatBar label="Sp. Def" value={p.stats.spd} /><StatBar label="Speed" value={p.stats.spe} />
+          </div>
+          <div className="mt-2 text-xs text-stone-500">At Lv.{lvl} (IV 15, no EVs, neutral): HP {at50.hp} · Atk {at50.atk} · Def {at50.def} · SpA {at50.spa} · SpD {at50.spd} · Spe {at50.spe}</div>
         </Section>
         <Section title="Type matchups (defending)">
           <div className="space-y-1 text-sm">
@@ -110,7 +133,7 @@ export default function PokemonPage() {
             <div><span className="text-stone-500">Immune to:</span> {m.immune.length ? m.immune.map((t) => <TypeBadge key={t} type={t as Pokemon['types'][number]} small />) : '—'}</div>
           </div>
           <div className="mt-3">
-            <div className="mb-1 text-xs uppercase text-stone-500">Evolution line</div>
+            <div className="mb-1 text-[11px] font-bold uppercase tracking-wider text-stone-500">Evolution line</div>
             <div className="flex flex-wrap items-center gap-2 text-sm">
               {stages.map((st, i) => (
                 <div key={i} className="flex items-center gap-2">
@@ -120,7 +143,7 @@ export default function PokemonPage() {
                       const from = stages[i - 1]?.find((f) => f.evolutions.some((e) => e.to === x.id))
                       const e = from?.evolutions.find((ev) => ev.to === x.id)
                       return (
-                        <div key={x.id} className={`flex items-center gap-1 rounded px-1 ${x.id === id ? 'bg-red-50 ring-1 ring-red-300 dark:bg-red-950' : ''}`}>
+                        <div key={x.id} className={`flex items-center gap-1 rounded-lg px-1 py-0.5 ${x.id === id ? 'bg-dex-50 ring-1 ring-dex-500/40 dark:bg-dex-900/40' : ''}`}>
                           <PokemonLink id={x.id} />
                           {from && <span className="text-xs text-stone-500">({evoText(from, x)})</span>}
                           {e?.note && <span className="text-xs text-amber-700 dark:text-amber-400" title={e.note}>⚠</span>}
@@ -142,10 +165,10 @@ export default function PokemonPage() {
             <tbody>
               {[...p.locations].sort((a, b) => b.rate - a.rate).map((l, i) => (
                 <tr key={i} className="border-t border-stone-100 dark:border-stone-800">
-                  <td className="py-1 pr-2"><LocationLink id={l.map} /></td>
-                  <td className="py-1 pr-2 text-stone-500">{METHOD[l.method] ?? l.method}</td>
-                  <td className="py-1 pr-2 text-right">Lv.{l.min}{l.max !== l.min ? `–${l.max}` : ''}</td>
-                  <td className="py-1 text-right">{l.rate}%</td>
+                  <td className="py-1.5 pr-2"><LocationLink id={l.map} /></td>
+                  <td className="py-1.5 pr-2 text-stone-500">{METHOD[l.method] ?? l.method}</td>
+                  <td className="py-1.5 pr-2 text-right tabular-nums">Lv.{l.min}{l.max !== l.min ? `–${l.max}` : ''}</td>
+                  <td className="py-1.5 text-right tabular-nums">{l.rate}%</td>
                 </tr>
               ))}
             </tbody>
@@ -154,19 +177,18 @@ export default function PokemonPage() {
         {db.trades.filter((t) => t.get === id).map((t) => <div key={t.key} className="mt-1 text-sm">🔁 In-game trade: give <PokemonLink id={t.give} /> → get <b>{t.nickname}</b> ({p.name}). See <Link className="link" to="/trades">trades</Link>.</div>)}
       </Section>
 
-      <Section title="Moves" right={
-        <div className="flex gap-1 text-xs">
-          {(['level', 'tm', 'tutor', 'egg'] as const).map((t) => <button key={t} onClick={() => setTab(t)} className={`rounded px-2 py-0.5 ${tab === t ? 'bg-red-700 text-white' : 'bg-stone-200 dark:bg-stone-800'}`}>{{ level: 'Level up', tm: 'TM/HM', tutor: 'Tutor', egg: 'Egg' }[t]}</button>)}
-        </div>}>
-        {tab === 'level' && <MoveTable rows={p.levelUp.map(([l, mv]) => ({ move: db.moveById.get(mv)!, label: l === 1 ? '—' : l }))} />}
-        {tab === 'tm' && <MoveTable rows={p.tmhm.map((it) => ({ move: db.moveById.get(db.itemById.get(it)!.move!)!, label: db.itemById.get(it)!.name.split(' ')[0] }))} extra={(mv) => { const it = p.tmhm.find((i) => db.itemById.get(i)?.move === mv.id); return it ? <Link to={`/items/${it}`} className="link text-xs">where</Link> : null }} />}
-        {tab === 'tutor' && (p.tutor.length ? <MoveTable rows={p.tutor.map((mv) => ({ move: db.moveById.get(mv)! }))} extra={(mv) => { const loc = db.locations.find((l) => l.tutors.some((t) => t.move === mv.id)); return loc ? <LocationLink id={loc.id} className="text-xs" /> : null }} /> : <Empty>No tutor moves.</Empty>)}
-        {tab === 'egg' && (p.egg.length ? <MoveTable rows={p.egg.map((mv) => ({ move: db.moveById.get(mv)! }))} /> : <Empty>No egg moves{p.evolvesFrom ? ' (see the base form)' : ''}.</Empty>)}
+      <Section title="Moves" right={<Seg value={tab} onChange={(v) => setTab(v)} options={[{ value: 'level', label: 'Level up' }, { value: 'tm', label: 'TM/HM' }, { value: 'tutor', label: 'Tutor' }, { value: 'egg', label: 'Egg' }]} />}>
+        <div key={tab} className="fade-up">
+          {tab === 'level' && <MoveTable rows={p.levelUp.map(([l, mv]) => ({ move: db.moveById.get(mv)!, label: l === 1 ? '—' : l }))} />}
+          {tab === 'tm' && <MoveTable rows={p.tmhm.map((it) => ({ move: db.moveById.get(db.itemById.get(it)!.move!)!, label: db.itemById.get(it)!.name.split(' ')[0] }))} extra={(mv) => { const it = p.tmhm.find((i) => db.itemById.get(i)?.move === mv.id); return it ? <Link to={`/items/${it}`} className="link text-xs">where</Link> : null }} />}
+          {tab === 'tutor' && (p.tutor.length ? <MoveTable rows={p.tutor.map((mv) => ({ move: db.moveById.get(mv)! }))} extra={(mv) => { const loc = db.locations.find((l) => l.tutors.some((t) => t.move === mv.id)); return loc ? <LocationLink id={loc.id} className="text-xs" /> : null }} /> : <Empty>No tutor moves.</Empty>)}
+          {tab === 'egg' && (p.egg.length ? <MoveTable rows={p.egg.map((mv) => ({ move: db.moveById.get(mv)! }))} /> : <Empty>No egg moves{p.evolvesFrom ? ' (see the base form)' : ''}.</Empty>)}
+        </div>
       </Section>
 
       {trainersWith.length > 0 && (
         <Section title="Used by trainers">
-          <div className="flex flex-wrap gap-1 text-sm">{trainersWith.map((t) => <Link key={t.id} to={`/trainers/${t.id}`} className="chip bg-stone-200 dark:bg-stone-800">{t.class} {t.name} (Lv.{t.party.find((x) => x.species === id)?.level})</Link>)}</div>
+          <div className="flex flex-wrap gap-1 text-sm">{trainersWith.map((t) => <Link key={t.id} to={`/trainers/${t.id}`} className="chip-btn">{t.class} {t.name} (Lv.{t.party.find((x) => x.species === id)?.level})</Link>)}</div>
         </Section>
       )}
     </div>

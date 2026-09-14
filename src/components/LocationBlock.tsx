@@ -19,9 +19,9 @@ export function LocationBlock({ loc, defaultOpen = true }: { loc: Location; defa
   return (
     <div className="mt-4 mb-1">
       <div className="flex items-center gap-2 border-b border-stone-200 pb-1 dark:border-stone-800">
-        <Link to={`/location/${loc.id}`} className="text-xs font-semibold uppercase tracking-wide text-red-700 hover:underline dark:text-red-400">{loc.name}</Link>
-        {loc.mapImage && <button className={`chip text-[10px] ${showMap ? 'bg-red-700 text-white' : 'bg-stone-200 dark:bg-stone-800'}`} onClick={() => setShowMap(!showMap)}>🗺 map</button>}
-        {prose.length > 0 && <button className={`chip text-[10px] ${showText ? 'bg-stone-300 dark:bg-stone-700' : 'bg-stone-200 dark:bg-stone-800'}`} onClick={() => setShowText(!showText)}>{showText ? 'hide directions' : 'directions'}</button>}
+        <Link to={`/location/${loc.id}`} className="text-xs font-semibold uppercase tracking-wide text-dex-600 hover:underline dark:text-red-400">{loc.name}</Link>
+        {loc.mapImage && <button className={`chip-btn text-[10px] ${showMap ? "chip-on" : ""}`} onClick={() => setShowMap(!showMap)}>🗺 map</button>}
+        {prose.length > 0 && <button className={`chip-btn text-[10px] ${showText ? "chip-on" : ""}`} onClick={() => setShowText(!showText)}>{showText ? 'hide directions' : 'directions'}</button>}
       </div>
       {showMap && <div className="mt-2"><MapView loc={loc} markers={markers} height={360} /></div>}
       {showText && prose.length > 0 && (

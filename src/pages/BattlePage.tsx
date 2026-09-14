@@ -52,7 +52,7 @@ export default function BattlePage() {
         )}
       </div>
       <div className="mb-3 flex flex-wrap gap-1">
-        {quick.map((t) => <button key={t.id} onClick={() => setParams({ t: String(t.id) })} className={`chip ${trainer?.id === t.id ? 'bg-red-700 text-white' : 'bg-stone-200 dark:bg-stone-800'}`}>{t.classKey === 'LEADER' ? `Next gym: ${t.name}` : GROUP_LABEL[t.battleGroup ?? ''] ?? trainerDisplayName(t)}</button>)}
+        {quick.map((t) => <button key={t.id} onClick={() => setParams({ t: String(t.id) })} className={`chip-btn ${trainer?.id === t.id ? 'chip-on' : ''}`}>{t.classKey === 'LEADER' ? `Next gym: ${t.name}` : GROUP_LABEL[t.battleGroup ?? ''] ?? trainerDisplayName(t)}</button>)}
       </div>
       {!party.length && <p className="mb-3 rounded bg-amber-100 p-2 text-sm text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">Your party is empty. <Link className="link" to="/team">Add your Pokémon</Link> to get recommendations.</p>}
 
