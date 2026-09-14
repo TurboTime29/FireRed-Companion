@@ -39,6 +39,20 @@ function PasskeyManager() {
   )
 }
 
+function Diagnostics() {
+  const [err, setErr] = useState<{ at: string; where: string; message: string } | null>(() => { try { return JSON.parse(localStorage.getItem('firered-last-error') ?? 'null') } catch { return null } })
+  const sw = 'serviceWorker' in navigator
+  return (
+    <Section title="Diagnostics">
+      <div className="text-xs text-stone-500">Build {__BUILD_TIME__} · {sw ? 'offline cache on' : 'no service worker'} · {window.matchMedia('(display-mode: standalone)').matches ? 'installed app' : 'browser tab'}</div>
+      {err ? (
+        <div className="mt-1 text-xs"><span className="text-stone-500">Last error ({new Date(err.at).toLocaleString()}, {err.where}):</span> <code className="break-all">{err.message}</code> <button className="link ml-1" onClick={() => { try { localStorage.removeItem('firered-last-error') } catch { /* ignore */ } setErr(null) }}>clear</button></div>
+      ) : <div className="mt-1 text-xs text-stone-500">No errors recorded.</div>}
+      <button className="btn-ghost mt-2 text-xs" onClick={async () => { try { const regs = await navigator.serviceWorker?.getRegistrations(); for (const r of regs ?? []) await r.update() } catch { /* ignore */ } window.location.reload() }}>Check for update & reload</button>
+    </Section>
+  )
+}
+
 export default function SettingsPage() {
   const db = getDb()
   const prog = useProgress()
@@ -158,6 +172,7 @@ export default function SettingsPage() {
         </div>
       </Section>
       {msg && <p className="text-sm text-emerald-700 dark:text-emerald-400">{msg}</p>}
+      <Diagnostics />
     </div>
   )
 }

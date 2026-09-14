@@ -1,34 +1,44 @@
-import { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useRef, useState, type ComponentType } from 'react'
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { useDb } from './data/db'
 import { SearchBox } from './components/SearchBox'
 import { useSettings } from './store/settings'
 import { useSync, useSyncStatus } from './lib/sync'
 import { ROOT_LABEL, TAB_ROOTS, parentOf, useChrome } from './store/chrome'
+import { ErrorBoundary, isStaleChunkError, reloadOnceForStaleChunk, rememberError } from './components/ErrorBoundary'
 
-const Dashboard = lazy(() => import('./pages/Dashboard'))
-const Guide = lazy(() => import('./pages/Guide'))
-const ChapterPage = lazy(() => import('./pages/ChapterPage'))
-const LocationsPage = lazy(() => import('./pages/LocationsPage'))
-const LocationPage = lazy(() => import('./pages/LocationPage'))
-const Pokedex = lazy(() => import('./pages/Pokedex'))
-const PokemonPage = lazy(() => import('./pages/PokemonPage'))
-const MovesPage = lazy(() => import('./pages/MovesPage'))
-const MovePage = lazy(() => import('./pages/MovePage'))
-const ItemsPage = lazy(() => import('./pages/ItemsPage'))
-const ItemPage = lazy(() => import('./pages/ItemPage'))
-const TrainersPage = lazy(() => import('./pages/TrainersPage'))
-const TrainerPage = lazy(() => import('./pages/TrainerPage'))
-const TeamPage = lazy(() => import('./pages/TeamPage'))
-const BattlePage = lazy(() => import('./pages/BattlePage'))
-const TypeChartPage = lazy(() => import('./pages/TypeChartPage'))
-const SettingsPage = lazy(() => import('./pages/SettingsPage'))
-const MorePage = lazy(() => import('./pages/MorePage'))
-const SearchPage = lazy(() => import('./pages/SearchPage'))
-const TradesPage = lazy(() => import('./pages/TradesPage'))
-const MissablesPage = lazy(() => import('./pages/MissablesPage'))
-const TmPage = lazy(() => import('./pages/TmPage'))
-const EncountersPage = lazy(() => import('./pages/EncountersPage'))
+/** lazy() that survives a deploy happening while the app is open: a missing chunk reloads the app once instead of crashing. */
+function L<T extends { default: ComponentType }>(f: () => Promise<T>) {
+  return lazy(() => f().catch((e: unknown) => {
+    rememberError(e, 'chunk')
+    if (isStaleChunkError(e) && reloadOnceForStaleChunk()) return new Promise<T>(() => {})
+    throw e
+  }))
+}
+
+const Dashboard = L(() => import('./pages/Dashboard'))
+const Guide = L(() => import('./pages/Guide'))
+const ChapterPage = L(() => import('./pages/ChapterPage'))
+const LocationsPage = L(() => import('./pages/LocationsPage'))
+const LocationPage = L(() => import('./pages/LocationPage'))
+const Pokedex = L(() => import('./pages/Pokedex'))
+const PokemonPage = L(() => import('./pages/PokemonPage'))
+const MovesPage = L(() => import('./pages/MovesPage'))
+const MovePage = L(() => import('./pages/MovePage'))
+const ItemsPage = L(() => import('./pages/ItemsPage'))
+const ItemPage = L(() => import('./pages/ItemPage'))
+const TrainersPage = L(() => import('./pages/TrainersPage'))
+const TrainerPage = L(() => import('./pages/TrainerPage'))
+const TeamPage = L(() => import('./pages/TeamPage'))
+const BattlePage = L(() => import('./pages/BattlePage'))
+const TypeChartPage = L(() => import('./pages/TypeChartPage'))
+const SettingsPage = L(() => import('./pages/SettingsPage'))
+const MorePage = L(() => import('./pages/MorePage'))
+const SearchPage = L(() => import('./pages/SearchPage'))
+const TradesPage = L(() => import('./pages/TradesPage'))
+const MissablesPage = L(() => import('./pages/MissablesPage'))
+const TmPage = L(() => import('./pages/TmPage'))
+const EncountersPage = L(() => import('./pages/EncountersPage'))
 
 const tabs = [
   { to: '/', label: 'Home', icon: '🏠' },
@@ -207,6 +217,7 @@ export default function App() {
         <main className="min-w-0 flex-1 px-3 py-3 pb-24 md:px-6 md:py-5 md:pb-10">
           <Suspense fallback={<div className="flex justify-center p-10"><PokeballSpinner size={40} /></div>}>
             <div key={loc.pathname} className="page-enter">
+              <ErrorBoundary>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/guide" element={<Guide />} />
@@ -232,6 +243,7 @@ export default function App() {
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/more" element={<MorePage />} />
               </Routes>
+              </ErrorBoundary>
             </div>
           </Suspense>
         </main>

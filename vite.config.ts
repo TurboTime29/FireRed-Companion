@@ -8,6 +8,7 @@ const base = process.env.VITE_BASE ?? '/firered-companion/'
 
 export default defineConfig({
   base,
+  define: { __BUILD_TIME__: JSON.stringify(new Date().toISOString().slice(0, 16).replace('T', ' ')) },
   plugins: [
     react(),
     tailwindcss(),
