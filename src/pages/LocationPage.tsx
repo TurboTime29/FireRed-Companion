@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getDb } from '../data/db'
-import type { EncounterSlot } from '../data/types'
+import type { EncounterSlot, Location } from '../data/types'
+import { MapView, useLocationMarkers } from '../components/MapView'
 import { useProgress } from '../store/progress'
 import { guideItemsFor, guideSectionsFor, guideWhere } from '../lib/guide'
 import { trainerDisplayName } from '../lib/selectors'
 import { Check, Empty, ItemLink, LocationLink, MoveLink, PageTitle, PokemonLink, Section, Sprite } from '../components/ui'
+
+const emptyLoc: Location = { id: '', key: '', section: '', sectionName: '', name: '', type: '', connections: [], warps: [], items: [], hiddenItems: [], trainers: [], shops: [], tutors: [], encounters: {}, width: 0, height: 0, mapImage: false, mapOffset: [0, 0], mapSize: [0, 0], trainerPos: {}, warpPos: [] }
 
 const METHOD_LABEL: Record<string, string> = { grass: 'Walking (grass / cave)', surf: 'Surfing', 'rock-smash': 'Rock Smash', 'old-rod': 'Old Rod', 'good-rod': 'Good Rod', 'super-rod': 'Super Rod' }
 
@@ -19,6 +22,7 @@ export default function LocationPage() {
   const setBeaten = useProgress((s) => s.setBeaten)
   const caught = useProgress((s) => s.caught)
   const [showGuide, setShowGuide] = useState(false)
+  const markers = useLocationMarkers(l ?? emptyLoc)
   if (!l) return <Empty>Unknown location.</Empty>
   const siblings = db.locations.filter((x) => x.sectionName === l.sectionName && x.id !== l.id && !x.key.includes('Unused'))
   const encounterMethods = Object.keys(l.encounters).filter((k) => !k.endsWith('Rate'))
@@ -37,6 +41,11 @@ export default function LocationPage() {
         </div>
       )}
 
+      {l.mapImage && (
+        <Section title="Map">
+          <MapView loc={l} markers={markers} height={480} />
+        </Section>
+      )}
       {encounterMethods.length > 0 && (
         <Section title="Wild Pokémon (FireRed)">
           {encounterMethods.map((m) => (

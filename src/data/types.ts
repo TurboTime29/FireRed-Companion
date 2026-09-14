@@ -134,6 +134,15 @@ export interface Location {
   shops: number[][]
   tutors: { move: number; x?: number; y?: number }[]
   encounters: Record<string, EncounterSlot[] | number>
+  width: number
+  height: number
+  mapImage: boolean
+  /** tile offset of the image's top-left within the layout (Bulbapedia crops indoor maps) */
+  mapOffset: [number, number]
+  /** image pixel size */
+  mapSize: [number, number]
+  trainerPos: Record<string, [number, number]>
+  warpPos: { x: number; y: number; to: string }[]
 }
 
 export interface TypeChart { types: TypeName[]; effectiveness: Record<string, Record<string, number>> }

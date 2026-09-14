@@ -447,11 +447,16 @@ for e in encounters_raw["encounters"]:
             out[label + "Rate"] = e[kind]["encounter_rate"]
     enc_by_map[e["map"]] = out
 
+layouts = {l.get("id"): l for l in json.load(open(os.path.join(ROOT, "data/layouts/layouts.json"), encoding="utf-8"))["layouts"] if l.get("id")}
+MAPS_DIR = os.path.join(PROJ, "public", "maps")
+_mi = os.path.join(HERE, "raw", "maps_index.json")
+MAP_INDEX = json.load(open(_mi, encoding="utf-8")).get("maps", {}) if os.path.exists(_mi) else {}
 locations = {}
 gifts = []
 for mj in sorted(glob.glob(os.path.join(ROOT, "data/maps/*/map.json"))):
     m = json.load(open(mj, encoding="utf-8"))
     folder = os.path.basename(os.path.dirname(mj))
+    lay = layouts.get(m.get("layout"), {})
     sec = m["region_map_section"]
     scripts_path = os.path.join(os.path.dirname(mj), "scripts.inc")
     scr = open(scripts_path, encoding="utf-8").read() if os.path.exists(scripts_path) else ""
@@ -462,14 +467,22 @@ for mj in sorted(glob.glob(os.path.join(ROOT, "data/maps/*/map.json"))):
         "connections": [{"map": c["map"], "dir": c["direction"]} for c in (m.get("connections") or [])],
         "warps": sorted({w["dest_map"] for w in m.get("warp_events", []) if w["dest_map"] != m["id"]}),
         "items": [], "hiddenItems": [], "trainers": [], "shops": [], "tutors": [], "encounters": enc_by_map.get(m["id"], {}),
+        "width": lay.get("width", 0), "height": lay.get("height", 0), "mapImage": os.path.exists(os.path.join(MAPS_DIR, m["id"] + ".png")),
+        "mapOffset": MAP_INDEX.get(m["id"], {}).get("offset", [0, 0]), "mapSize": [MAP_INDEX.get(m["id"], {}).get("w", 0), MAP_INDEX.get(m["id"], {}).get("h", 0)],
+        "trainerPos": {}, "warpPos": [],
     }
+    for w in m.get("warp_events", []):
+        if w["dest_map"] != m["id"]:
+            loc["warpPos"].append({"x": w["x"], "y": w["y"], "to": w["dest_map"]})
     seen = []
 
-    def add_trainer(k):
+    def add_trainer(k, pos=None):
         if k in TRAINER_BY_KEY and k not in seen:
             seen.append(k)
             loc["trainers"].append(TRAINER_BY_KEY[k])
             trainers[TRAINER_BY_KEY[k]]["maps"].append(m["id"])
+        if k in TRAINER_BY_KEY and pos and str(TRAINER_BY_KEY[k]) not in loc["trainerPos"]:
+            loc["trainerPos"][str(TRAINER_BY_KEY[k])] = pos
 
     for ev in m.get("object_events", []):
         if ev.get("graphics_id") == "OBJ_EVENT_GFX_ITEM_BALL":
@@ -487,7 +500,7 @@ for mj in sorted(glob.glob(os.path.join(ROOT, "data/maps/*/map.json"))):
             if mk in MOVE_BY_KEY:
                 loc["tutors"].append({"move": MOVE_BY_KEY[mk], "x": ev["x"], "y": ev["y"]})
         if sc in label_trainer:
-            add_trainer(label_trainer[sc])
+            add_trainer(label_trainer[sc], [ev["x"], ev["y"]])
     for tl in re.findall(r"(?:goto|call|goto_if_\w+ \w+, \w+,) (\w+Tutor)\b", scr):
         if tl in tutor_scripts and "MOVE_" + tutor_scripts[tl] in MOVE_BY_KEY and not any(t["move"] == MOVE_BY_KEY["MOVE_" + tutor_scripts[tl]] for t in loc["tutors"]):
             loc["tutors"].append({"move": MOVE_BY_KEY["MOVE_" + tutor_scripts[tl]]})

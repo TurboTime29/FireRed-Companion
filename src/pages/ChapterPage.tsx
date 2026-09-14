@@ -6,6 +6,7 @@ import { useParty, useProgress } from '../store/progress'
 import { chapterProgress, readiness, trainersForGroup } from '../lib/selectors'
 import { Check, Empty, ItemLink, LocationLink, PageTitle, PokemonLink, Section, Sprite } from '../components/ui'
 import { EncounterCard } from '../components/EncounterCard'
+import { LocationBlock } from '../components/LocationBlock'
 
 function StepText({ s }: { s: Step }) {
   const db = getDb()
@@ -85,7 +86,7 @@ export default function ChapterPage() {
           if (s.map) lastMap = s.map
           return (
             <div key={s.id}>
-              {header && <div className="mt-3 mb-1 border-b border-stone-200 pb-0.5 text-xs font-semibold uppercase tracking-wide text-stone-500 dark:border-stone-800"><LocationLink id={header} /></div>}
+              {header && db.locationById.get(header) && <LocationBlock loc={db.locationById.get(header)!} />}
               <Check checked={!!steps[s.id]} onChange={(v) => done(s, v)} label={<StepText s={s} />} kind={s.kind === 'story' ? undefined : s.kind} sub={s.encounter && s.encounter.kind !== 'wild' ? <span className="font-medium text-red-700 dark:text-red-400">💾 {s.encounter.savePoint}</span> : s.where} />
             </div>
           )

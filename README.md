@@ -26,4 +26,4 @@ Push to `main`; the GitHub Actions workflow builds and publishes to GitHub Pages
 
 ## Credits
 
-Game data © Nintendo / Creatures / GAME FREAK, extracted via pret/pokefirered. Sprites and text from PokeAPI. Walkthrough prose adapted from Bulbapedia (CC BY-NC-SA 2.5). Fan-made, non-commercial.
+Game data © Nintendo / Creatures / GAME FREAK, extracted via pret/pokefirered. Sprites and text from PokeAPI. Walkthrough prose and map images from Bulbapedia (CC BY-NC-SA 2.5; map images are game screenshots © Nintendo). Fan-made, non-commercial.
