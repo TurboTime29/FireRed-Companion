@@ -59,10 +59,34 @@ export async function deletePasskey(passkeyId: string) {
   if (error) throw error
 }
 
-/** Completes sign-in with the code from the email: works inside an installed PWA where a link would open Safari instead. */
-export async function verifyCode(email: string, code: string) {
+/**
+ * Completes sign-in from what the user pastes out of the email: either a one-time code
+ * (if the template shows {{ .Token }}) or the magic link itself. The default Supabase
+ * link is https://<project>.supabase.co/auth/v1/verify?token=<token_hash>&type=magiclink&redirect_to=...
+ * and that token_hash can be verified in-app, so an installed PWA never has to open Safari.
+ */
+export async function verifyCode(email: string, input: string) {
   if (!supabase) throw new Error('sync disabled')
-  const { error } = await supabase.auth.verifyOtp({ email, token: code.replace(/\s+/g, ''), type: 'email' })
+  const raw = input.trim()
+  if (/^https?:\/\//i.test(raw)) {
+    const u = new URL(raw)
+    const hash = new URLSearchParams(u.hash.replace(/^#/, ''))
+    const tokenHash = u.searchParams.get('token')
+    if (tokenHash) {
+      const t = (u.searchParams.get('type') || 'magiclink') as 'magiclink' | 'email' | 'signup' | 'recovery'
+      const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: t })
+      if (error) throw error
+      return
+    }
+    if (hash.get('access_token') && hash.get('refresh_token')) {
+      const { error } = await supabase.auth.setSession({ access_token: hash.get('access_token')!, refresh_token: hash.get('refresh_token')! })
+      if (error) throw error
+      return
+    }
+    if (u.searchParams.get('code')) throw new Error('that is the page Safari landed on, not the link from the email. Long-press the link inside the email and choose Copy Link')
+    throw new Error('no sign-in token in that link')
+  }
+  const { error } = await supabase.auth.verifyOtp({ email, token: raw.replace(/\s+/g, ''), type: 'email' })
   if (error) throw error
 }
 export async function signOut() { await supabase?.auth.signOut() }

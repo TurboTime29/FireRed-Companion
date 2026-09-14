@@ -20,20 +20,9 @@ python scripts/build_bulba.py        # guide.json (walkthrough prose + item posi
 python scripts/build_walkthrough.py  # walkthrough.json from content/walkthrough/*.json, with coverage report
 ```
 
-## Sign-in email (one-time code)
+## Sign-in without leaving the installed app
 
-The app signs in with an email code so it also works as an iOS/Android home-screen app (a magic link would open Safari instead of the installed app). Supabase sends the code only if the email template contains it:
-
-1. Supabase dashboard → **Authentication → Email Templates → Magic Link**.
-2. Put this in the body (keep the link if you like; both work):
-
-   ```html
-   <h2>Your FireRed Companion sign-in code</h2>
-   <p style="font-size:28px;letter-spacing:6px"><b>{{ .Token }}</b></p>
-   <p>Enter it in Settings → Cloud sync. Or on a computer, <a href="{{ .ConfirmationURL }}">open this link</a>.</p>
-   ```
-
-3. Optional hardening under **Authentication → Providers → Email**: set *Email OTP Length* to 8–10 digits and *Email OTP Expiration* to 600 seconds. Supabase also rate-limits attempts, so a code cannot be brute-forced.
+Supabase sends a magic link. In an iOS/Android home-screen app, tapping it opens the system browser, so the session never reaches the app. Instead, Settings → Cloud sync accepts the **pasted link** (long-press → Copy Link in the mail app): the app reads the `token` (token hash) from the link and verifies it in place with `verifyOtp`. No custom SMTP or template change is required. If you do have custom SMTP, adding `{{ .Token }}` to the Magic Link template lets people paste a short code instead; the same box accepts it.
 
 ## Passkeys (Face ID / Touch ID / Windows Hello)
 

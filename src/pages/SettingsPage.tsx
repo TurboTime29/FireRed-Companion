@@ -33,7 +33,7 @@ function PasskeyManager() {
           {keys.map((k) => <li key={k.id} className="flex items-center gap-2 py-1 text-xs"><span className="flex-1">{k.name || 'Passkey'} · added {new Date(k.createdAt).toLocaleDateString()}{k.lastUsedAt ? ` · last used ${new Date(k.lastUsedAt).toLocaleDateString()}` : ''}</span><button className="link" onClick={() => void remove(k)}>remove</button></li>)}
         </ul>
       )}
-      {keys && keys.length === 0 && <p className="mt-1 text-xs text-stone-500">No passkeys yet. Add one here on each device you use (Apple devices share them through iCloud Keychain).</p>}
+      {keys && keys.length === 0 && passkeySupported && <p className="mt-1 rounded-lg bg-amber-100 px-2 py-1 text-xs text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">No passkeys yet. Add one now so next time it is just Face ID / Touch ID / Windows Hello, with no email at all. Apple devices share passkeys through iCloud Keychain, so one added in Safari also works in the home-screen app.</p>}
       {msg && <p className="mt-1 text-xs text-stone-600 dark:text-stone-300">{msg}</p>}
     </div>
   )
@@ -60,7 +60,7 @@ export default function SettingsPage() {
   }
   const verify = async () => {
     setBusy(true)
-    try { await verifyCode(email, code); try { localStorage.removeItem('firered-pending-email') } catch { /* ignore */ } setSent(false); setCode(''); setMsg('Signed in.') } catch (err) { setMsg('Code not accepted: ' + (err as Error).message + '. Codes expire after a while; send a new one if needed.') } finally { setBusy(false) }
+    try { await verifyCode(email, code); try { localStorage.removeItem('firered-pending-email') } catch { /* ignore */ } setSent(false); setCode(''); setMsg('Signed in.') } catch (err) { setMsg('Not accepted: ' + (err as Error).message + '. Links and codes expire after a while and work once; send a new one if needed.') } finally { setBusy(false) }
   }
   const [parsed, setParsed] = useState<ParsedSave | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -110,10 +110,15 @@ export default function SettingsPage() {
         )}
         {syncEnabled && !session && sent && (
           <form onSubmit={(e) => { e.preventDefault(); void verify() }} className="fade-up space-y-2">
-            <p className="text-sm">Email sent to <b>{email}</b>. Paste the <b>one-time code</b> from it below. (The link in the email also works on a computer, but on a home-screen app it opens Safari instead, so use the code.)</p>
+            <p className="text-sm">Email sent to <b>{email}</b>.</p>
+            <ul className="list-disc space-y-0.5 pl-5 text-xs text-stone-600 dark:text-stone-300">
+              <li><b>Home-screen app (iPhone/Android):</b> in the email, <b>long-press the "Log In" link → Copy Link</b>, come back here and paste it. Tapping the link would open Safari instead of this app.</li>
+              <li><b>Computer:</b> just click the link, or paste it here.</li>
+              <li>If the email shows a numeric code, that works here too.</li>
+            </ul>
             <div className="flex gap-2">
-              <input value={code} onChange={(e) => setCode(e.target.value)} inputMode="numeric" autoComplete="one-time-code" placeholder="123456" className="input font-mono text-lg tracking-[0.3em]" autoFocus />
-              <button className="btn-primary shrink-0" disabled={busy || code.trim().length < 6}>{busy ? 'Checking…' : 'Verify'}</button>
+              <input value={code} onChange={(e) => setCode(e.target.value)} autoComplete="one-time-code" placeholder="Paste the link or code" className="input font-mono" autoFocus />
+              <button className="btn-primary shrink-0" disabled={busy || code.trim().length < 6}>{busy ? 'Checking…' : 'Sign in'}</button>
             </div>
             <div className="flex gap-2 text-xs"><button type="button" className="link" onClick={() => void sendCode()} disabled={busy}>Resend code</button><button type="button" className="link" onClick={() => { setSent(false); setCode(''); try { localStorage.removeItem('firered-pending-email') } catch { /* ignore */ } }}>Use a different email</button></div>
           </form>
