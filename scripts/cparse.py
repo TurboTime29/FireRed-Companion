@@ -20,7 +20,7 @@ def defines(rel):
 def defines_eval(rel, seed=None):
     """name -> int for #defines whose value is an integer expression over earlier defines (e.g. (SYS_FLAGS + 0x20))."""
     env = dict(seed or {})
-    for m in re.finditer(r"^#define\s+([A-Z0-9_]+)\s+(.+?)\s*(?://.*)?$", read(rel), re.M):
+    for m in re.finditer(r"^#define\s+(\w+)\s+(.+?)\s*(?://.*)?$", read(rel), re.M):
         name, expr = m.group(1), m.group(2)
         expr = re.sub(r"/\*.*?\*/", "", expr).strip()
         if not re.fullmatch(r"[A-Za-z0-9_\s+\-*()<>|]+", expr):
